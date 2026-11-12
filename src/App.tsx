@@ -41,7 +41,7 @@ export default function App() {
   const piece = useMemo(() => createBreathingPiece({ styles, power, seed: `${platform}:${user.toLowerCase()}` }), [styles, power, platform, user]);
   const daily = useMemo(() => makePreviewDays(count, `${platform}:${user.toLowerCase()}`), [count, platform, user]);
   const dailyMax = Math.max(1, ...daily);
-  const toggle = (id: StyleId) => setStyles((items) => items.includes(id) ? items.filter((item) => item !== id) : [...items, id]);
+  const toggle = (id: StyleId) => setStyles((items) => items.includes(id) ? (items.length > 1 ? items.filter((item) => item !== id) : items) : [...items, id]);
   const move = (id: StyleId, direction: number) => setStyles((items) => {
     const next = [...items]; const from = next.indexOf(id); const to = from + direction;
     if (from < 0 || to < 0 || to >= next.length) return items;
@@ -121,8 +121,8 @@ export default function App() {
             <div className="visual-card-heading"><div><span className="eyebrow">B / SECONDARY</span><h3>Daily contributions</h3></div><span className="data-tag">364 DAYS</span></div>
             <div className={`daily-visual ${paletteClass(dailyPalette)}`}>
               {dailyStyle === 'heatmap' ? <div className="heatmap-wrap">
-                {weekdays && <div className="weekday-labels"><span>Mon</span><span>Wed</span><span>Fri</span></div>}
-                <div className="heatmap-grid" style={{gridTemplateRows:`repeat(7, ${cellSize}px)`,gridAutoColumns:`${cellSize}px`,gap:`${cellGap}px`}}>
+                {weekdays && <div className="weekday-labels" style={{height:`calc(7 * ${cellSize}px + 6 * ${cellGap}px)`}}><span>Mon</span><span>Wed</span><span>Fri</span></div>}
+                <div className="heatmap-grid" style={{gridTemplateRows:`repeat(7, ${cellSize}px)`,gridAutoColumns:`${cellSize}px`,gap:`${cellGap}px`,'--cell-size':`${cellSize}px`} as React.CSSProperties}>
                   {daily.map((value,index) => <i key={index} title={`${value} contributions`} className={value===0?'level-0':value/dailyMax<.25?'level-1':value/dailyMax<.5?'level-2':value/dailyMax<.75?'level-3':'level-4'}/>)}
                 </div>
               </div> : <div className="daily-bars">{daily.filter((_,index)=>index%7===0).map((value,index)=><i key={index} title={`${value} contributions`} style={{height:`${Math.max(2,value/dailyMax*100)}%`}}/>)}</div>}
