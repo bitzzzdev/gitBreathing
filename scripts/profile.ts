@@ -27,7 +27,7 @@ const pinnedRepos = (user.pinnedItems?.nodes ?? []).filter(Boolean).slice(0,6);
 const topRepos = (user.repositories?.nodes ?? []).filter(Boolean).slice(0,6);
 const socialNodes = user.socialAccounts?.nodes ?? user.socialAccounts ?? [];
 const manualSocials = config.socials ?? {};
-const socials = [...socialNodes.map((s: Json) => ({name:s.provider || 'Social',url:s.url})), ...(user.twitterUsername ? [{name:'X',url:'https://x.com/'+encodeURIComponent(user.twitterUsername)}] : []), ...Object.entries(manualSocials).map(([name,url])=>({name,url}))].filter((s: Json)=>s.url).filter((s: Json,i:number,a:Json[])=>a.findIndex((v:Json)=>String(v.name).toLowerCase()===String(s.name).toLowerCase())===i);
+const socials = [...socialNodes.map((s: Json) => ({name:s.provider || 'Social',url:s.url})), ...(user.twitterUsername ? [{name:'X',url:'https://x.com/'+encodeURIComponent(user.twitterUsername)}] : []), ...Object.entries(manualSocials).map(([name,url])=>({name,url}))].filter((s: Json)=>s.url).filter((s: Json)=>!['website','orcid'].includes(String(s.name).toLowerCase())).filter((s: Json,i:number,a:Json[])=>a.findIndex((v:Json)=>String(v.name).toLowerCase()===String(s.name).toLowerCase())===i);
 const orcid = config.orcid || socials.find((s: Json)=>String(s.name).toLowerCase()==='orcid')?.url || '';
 const contributions = Number(calendar.totalContributions ?? user.contributions ?? config.contributions ?? 0);
 const visuals = readme.visualizations ?? {};
@@ -82,7 +82,7 @@ const preset=readme.animePreset??'original';
 const bg=readme.background??'#0b0d0b';
 const fg=readme.foreground??'#e8e9e4';
 const outParts:string[]=[];
-const profileName=user.name||user.login||config.username||'GitHub profile';
+const profileName=show.has('name')?(user.name||user.login||config.username||'GitHub profile'):(show.has('username')?(user.login||config.username||'GitHub profile'):'GitHub profile');
 const login=user.login||config.username||'';
 const bio=user.bio||'';
 const website=user.websiteUrl||user.blog||config.website||'';
@@ -99,17 +99,16 @@ if(show.has('website')&&website){const href=safeUrl(website);outParts.push(href?
 if(show.has('email')&&user.email)outParts.push(tx(58,242,'EMAIL  '+user.email,10,'#aab6a8',400,true));
 if(show.has('joined')&&user.createdAt)outParts.push(tx(58,302,'GITHUB MEMBER SINCE  '+String(user.createdAt).slice(0,10),9,'#8e988d',400,true));
 if(show.has('socials')){let sx=58;for(const s of socials.slice(0,9)){const href=safeUrl(s.url);outParts.push(href?'<a href="'+href+'">'+pill(sx,258,String(s.name))+'</a>':pill(sx,258,String(s.name)));sx+=Math.min(210,String(s.name).length*7+32);if(sx>1030)break;}}
-if(show.has('twitter')&&user.twitterUsername)outParts.push(tx(58,275,'X  @'+user.twitterUsername,9,'#ffffff',400,true));
+if(show.has('twitter')&&user.twitterUsername&&!show.has('socials'))outParts.push(tx(58,275,'X  @'+user.twitterUsername,9,'#ffffff',400,true));
 if(show.has('orcid')&&orcid){const href=safeUrl(orcid);outParts.push(href?'<a href="'+href+'">'+tx(58,286,'ORCID  '+orcid,10,'#ffffff',400,true)+'</a>':tx(58,286,'ORCID  '+orcid,10,'#ffffff',400,true));}
 outParts.push(ln(310));
 let y=340;
 const profileDetails:string[]=[];
 if(show.has('pronouns')&&user.pronouns)profileDetails.push('PRONOUNS  '+user.pronouns);
-if(show.has('status')&&user.status?.message)profileDetails.push('STATUS  '+String(user.status.emoji||'')+' '+user.status.message);
+if(show.has('status')&&user.status?.message)profileDetails.push('STATUS  '+user.status.message);
 if(show.has('hireable')&&user.isHireable)profileDetails.push('OPEN TO WORK');
 if(show.has('programs')&&programs.length)profileDetails.push('GITHUB PROGRAMS  '+programs.join(' / '));
 if(profileDetails.length){outParts.push(label(58,y,'Profile details'));profileDetails.forEach((v,i)=>outParts.push(tx(58,y+24+i*20,v,9,'#c4c4cc',400,true)));y+=profileDetails.length*20+40;outParts.push(ln(y));y+=30;}
-const activeDays=days.filter((d:Json)=>Number(d.contributionCount)>0);
 const longestStreak=(()=>{let best=0,run=0,last=0;for(const d of days){const stamp=Date.parse(String(d.date)+'T00:00:00Z');if(Number(d.contributionCount)>0){run=last&&stamp-last===86400000?run+1:1;best=Math.max(best,run);}else run=0;last=stamp;}return best;})();
 const currentStreak=(()=>{let run=0,last=0;for(const d of [...days].reverse()){const stamp=Date.parse(String(d.date)+'T00:00:00Z');if(Number(d.contributionCount)>0&&(run===0||last-stamp===86400000)){run++;last=stamp;}else if(run>0)break;}return run;})();
 const metrics=[
