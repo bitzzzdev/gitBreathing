@@ -2,6 +2,8 @@ workflow:
   rules:
     - if: '$CI_PIPELINE_SOURCE == "push" && $CI_COMMIT_MESSAGE =~ /^chore: update GitBreathing artwork$/'
       when: never
+    - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
+      when: always
     - if: '$CI_COMMIT_BRANCH == "dev"'
       when: always
     - when: never
@@ -13,10 +15,19 @@ render-gitbreathing:
   stage: render
   image: node:22-bookworm
   before_script:
-    - apt-get update -qq && apt-get install -y -qq git
+    - apt-get update -qq && apt-get install -y -qq git jq curl
     - npm install --no-audit --no-fund
   script: |
     set -eu
+
+    npm run build
+
+    if [ "${CI_PIPELINE_SOURCE}" = "merge_request_event" ]; then
+      npm run render
+      npm run render:profile
+      echo "Merge request validation complete. Generated files are not committed from MR pipelines."
+      exit 0
+    fi
 
     if [ -z "${GITLAB_TOKEN:-}" ]; then
       echo "Set a masked GITLAB_TOKEN with API read and repository write access." >&2
@@ -53,7 +64,6 @@ render-gitbreathing:
       printf '%s' "$RESPONSE" | jq '{data:.data}' > dist/profile-data.json
     fi
 
-    npm run build
     npm run render
     npm run render:profile
     git config user.name 'GitBreathing CI'

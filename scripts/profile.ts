@@ -14,7 +14,7 @@ const makeFireSvg = (prefix: string) => {
  return part ? wrap(part, 'Animated ASCII breathing fire', 2) : fireSvg;
 };
 const extractFire = (source: string) => {
- const viewBox = source.match(/\\bviewBox="([^"]+)"/)?.[1] ?? '0 0 80 24';
+ const viewBox = source.match(/\bviewBox="([^"]+)"/)?.[1] ?? '0 0 80 24';
  const openEnd = source.indexOf('>');
  const closeStart = source.lastIndexOf('</svg>');
  const body = openEnd >= 0 && closeStart > openEnd ? source.slice(openEnd + 1, closeStart) : '';
