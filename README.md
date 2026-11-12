@@ -16,12 +16,12 @@ No JavaScript, iframe, external widget or custom HTML script is required in the 
 
 Configure `readme.show` in `gitbreathing.json` to select any combination of the available public fields. The studio exposes each field as an independent checkbox, including:
 
-- Avatar, display name, username, bio, location, company and website
+- Avatar, display name, username, bio, pronouns, status, hireability, location, company and website
 - GitHub social accounts and manually configured links
 - ORCID, including a manually supplied ORCID URL
 - Followers, following, public repositories, received stars, starred repositories, gists and organizations
-- Commit, pull request, issue and code-review contribution totals, plus current and longest active-day streaks
-- Top repository languages, pinned repositories and top repositories by stars
+- Commit, pull request, issue, code-review, discussion and authored-comment totals, plus current and longest active-day streaks
+- Top repository languages, pinned repositories, top repositories by stars, contributed repositories and GitHub Projects
 - Total contributions and the daily contribution calendar
 
 The workflow fetches public profile fields and the contribution calendar through GitHub GraphQL. Missing or private fields are omitted. Social accounts not exposed by GitHub can be added under `socials`, and ORCID can be set under `orcid`.
