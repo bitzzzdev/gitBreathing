@@ -42,7 +42,7 @@ export default function App() {
   const [count, setCount] = useState(850);
   const [max, setMax] = useState(5000);
   const [curve, setCurve] = useState(1);
-  const [user, setUser] = useState('your-username');
+  const [user, setUser] = useState('bitzzdev');
   const [platform, setPlatform] = useState('github');
   const [mode, setMode] = useState<Mode>('both');
   const [totalStyle, setTotalStyle] = useState<TotalStyle>('number');
@@ -75,7 +75,7 @@ export default function App() {
     const socials = Object.fromEntries(socialLines.split('\n').map((line) => line.split('|')).filter((parts) => parts.length >= 2 && parts[0].trim() && parts[1].trim()).map((parts) => [parts[0].trim(),parts[1].trim()]));
     const config = { username:user, platform, styles, maxContributions:max, powerCurve:curve, contributions:count, orcid:orcidUrl, socials,
       readme:{show:profileFields,layout:'editorial',theme:'portfolio-paper',animePreset,showCornerLabels,
-        corners:cornerThemes,visualizations:{total:{enabled:true,style:totalStyle,palette:totalPalette},daily:{enabled:true,style:dailyStyle,palette:dailyPalette,cellSize,cellGap,weekdays}}} };
+        corners:cornerThemes,visualizations:{total:{enabled:mode !== 'daily',style:totalStyle,palette:totalPalette},daily:{enabled:mode !== 'total',style:dailyStyle,palette:dailyPalette,cellSize,cellGap,weekdays}}} };
     const url = URL.createObjectURL(new Blob([JSON.stringify(config,null,2)+'\n'],{type:'application/json'}));
     const anchor = document.createElement('a'); anchor.href=url; anchor.download='gitbreathing.json'; anchor.click(); URL.revokeObjectURL(url);
   };
