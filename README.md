@@ -75,18 +75,24 @@ To display them in a separate profile README, replace the placeholders with your
 </p>
 ```
 
-## README embed
+## Live demo: Dev Borah (@bitzzdev)
 
-Embed both generated files directly so the README displays the static vector slash and the animated slash. GitHub and GitLab may apply different SVG security/rendering rules, so the GIF remains the animated compatibility output.
+The artwork below is generated from **Dev Borah's public GitHub contribution calendar** using the GitBreathing renderer. The workflow refreshes the SVG, animated GIF, PNG preview and metadata daily. It uses the contribution calendar total, which includes qualifying commits, pull requests, issues and code reviews, not commits alone.
 
-```html
 <p align="center">
-  <img src="https://raw.githubusercontent.com/USERNAME/REPOSITORY/BRANCH/dist/slash.svg" width="128" alt="GitBreathing static slash">
-  <img src="https://raw.githubusercontent.com/USERNAME/REPOSITORY/BRANCH/dist/slash.gif" width="128" alt="GitBreathing animated slash">
+  <img src="https://raw.githubusercontent.com/bitzzdev/gitBreathing/main/dist/slash.svg" width="160" alt="GitBreathing contribution breathing artwork for bitzzdev">
+  <img src="https://raw.githubusercontent.com/bitzzdev/gitBreathing/main/dist/slash.gif" width="160" alt="Animated GitBreathing contribution breathing artwork for bitzzdev">
 </p>
-```
 
-For GitLab, replace the raw URL with the project's raw file URL. The GIF is animated and uses a dark backing for reliable GIF transparency behavior; SVG is intentionally static, transparent when configured, and lightweight.
+<p align="center">
+  <a href="https://github.com/bitzzdev"><strong>GitHub: @bitzzdev</strong></a>
+  ·
+  <a href="https://github.com/bitzzdev/gitBreathing/actions/workflows/gitbreathing.yml">Generation workflow</a>
+  ·
+  <a href="https://raw.githubusercontent.com/bitzzdev/gitBreathing/main/dist/metadata.json">Latest render metadata</a>
+</p>
+
+The same assets can be embedded in your own profile README by replacing the repository path with your own generated-artifact repository. The GIF is animated and uses a dark backing for reliable GIF transparency behavior; SVG is static and scalable.
 
 ## Configuration
 
