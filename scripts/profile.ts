@@ -39,6 +39,11 @@ const repoCount = Number(user.repositories?.totalCount ?? user.publicRepos ?? 0)
 const starredRepos = Number(user.starredRepositories?.totalCount ?? 0);
 const gists = Number(user.gists?.totalCount ?? 0);
 const organizations = user.organizations?.nodes ?? [];
+const projects = user.projectsV2?.nodes ?? [];
+const contributedRepos = user.repositoriesContributedTo?.nodes ?? [];
+const discussions = Number(user.repositoryDiscussions?.totalCount ?? 0);
+const authoredComments = Number(user.issueComments?.totalCount ?? 0) + Number(user.commitComments?.totalCount ?? 0) + Number(user.repositoryDiscussionComments?.totalCount ?? 0);
+const programs = [user.isCampusExpert ? 'Campus Expert' : '', user.isDeveloperProgramMember ? 'Developer Program' : '', user.isGitHubStar ? 'GitHub Star' : '', user.hasSponsorsListing ? 'Sponsors' : ''].filter(Boolean);
 const cc = user.contributionsCollection ?? {};
 const stars = Number(topRepos.reduce((n: number,r: Json)=>n+Number(r.stargazerCount||0),0));
 const langs = new Map<string,{count:number,color:string}>();
@@ -98,6 +103,12 @@ if(show.has('twitter')&&user.twitterUsername)outParts.push(tx(58,275,'X  @'+user
 if(show.has('orcid')&&orcid){const href=safeUrl(orcid);outParts.push(href?'<a href="'+href+'">'+tx(58,286,'ORCID  '+orcid,10,'#ffffff',400,true)+'</a>':tx(58,286,'ORCID  '+orcid,10,'#ffffff',400,true));}
 outParts.push(ln(310));
 let y=340;
+const profileDetails:string[]=[];
+if(show.has('pronouns')&&user.pronouns)profileDetails.push('PRONOUNS  '+user.pronouns);
+if(show.has('status')&&user.status?.message)profileDetails.push('STATUS  '+String(user.status.emoji||'')+' '+user.status.message);
+if(show.has('hireable')&&user.isHireable)profileDetails.push('OPEN TO WORK');
+if(show.has('programs')&&programs.length)profileDetails.push('GITHUB PROGRAMS  '+programs.join(' / '));
+if(profileDetails.length){outParts.push(label(58,y,'Profile details'));profileDetails.forEach((v,i)=>outParts.push(tx(58,y+24+i*20,v,9,'#c4c4cc',400,true)));y+=profileDetails.length*20+40;outParts.push(ln(y));y+=30;}
 const activeDays=days.filter((d:Json)=>Number(d.contributionCount)>0);
 const longestStreak=(()=>{let best=0,run=0,last=0;for(const d of days){const stamp=Date.parse(String(d.date)+'T00:00:00Z');if(Number(d.contributionCount)>0){run=last&&stamp-last===86400000?run+1:1;best=Math.max(best,run);}else run=0;last=stamp;}return best;})();
 const currentStreak=(()=>{let run=0,last=0;for(const d of [...days].reverse()){const stamp=Date.parse(String(d.date)+'T00:00:00Z');if(Number(d.contributionCount)>0&&(run===0||last-stamp===86400000)){run++;last=stamp;}else if(run>0)break;}return run;})();
@@ -113,7 +124,9 @@ const metrics=[
  {id:'issues',name:'ISSUES',value:Number(cc.totalIssueContributions||0).toLocaleString()},
  {id:'reviews',name:'CODE REVIEWS',value:Number(cc.totalPullRequestReviewContributions||0).toLocaleString()},
  {id:'gists',name:'PUBLIC GISTS',value:gists.toLocaleString()},
- {id:'streak',name:'CURRENT / LONGEST STREAK',value:currentStreak+' / '+longestStreak+' days'}
+ {id:'streak',name:'CURRENT / LONGEST STREAK',value:currentStreak+' / '+longestStreak+' days'},
+ {id:'discussions',name:'DISCUSSIONS STARTED',value:discussions.toLocaleString()},
+ {id:'comments',name:'COMMENTS AUTHORED',value:authoredComments.toLocaleString()}
 ].filter(m=>show.has(m.id));
 if(metrics.length){outParts.push(label(58,y,'Account / activity metrics'));const cols=4,cellW=1084/cols,rows=Math.ceil(metrics.length/cols);metrics.forEach((m,i)=>{const col=i%cols,row=Math.floor(i/cols),x=58+col*cellW,yy=y+42+row*78;outParts.push(tx(x,yy,m.value,24,fg,600));outParts.push(tx(x,yy+20,m.name,8,'#8e8e98',500,true));if(col)outParts.push('<path d="M'+(x-15)+' '+(yy-20)+'V'+(yy+24)+'" stroke="#34343b"/>');});y+=42+rows*78+18;outParts.push(ln(y));y+=30;}
 if(show.has('contributions') && totalVisual.enabled!==false){outParts.push(label(58,y,'A / Total contributions'));const style=totalVisual.style||'number';const maxValue=Math.max(1,Number(config.maxContributions||5000));const progress=Math.max(0,Math.min(1,contributions/maxValue));const tone=totalVisual.palette==='ember'?'#c88d62':totalVisual.palette==='ocean'?'#82aeb4':'#cbd5c8';if(style==='ring'){const circ=2*Math.PI*43;outParts.push('<circle cx="112" cy="'+(y+66)+'" r="43" fill="none" stroke="#303630" stroke-width="8"/><circle cx="112" cy="'+(y+66)+'" r="43" fill="none" stroke="'+tone+'" stroke-width="8" stroke-dasharray="'+(circ*progress)+' '+circ+'" transform="rotate(-90 112 '+(y+66)+')"/>');outParts.push(tx(82,y+72,Math.round(progress*100)+'%',18,fg,600));outParts.push(tx(180,y+60,contributions.toLocaleString(),36,fg,650));outParts.push(tx(182,y+82,'total contributions',10,'#9ca59a',400,true));}else{outParts.push(tx(58,y+60,contributions.toLocaleString(),40,fg,650));if(style==='bar'){outParts.push('<rect x="58" y="'+(y+82)+'" width="1084" height="8" fill="#282e28"/><rect x="58" y="'+(y+82)+'" width="'+(1084*progress)+'" height="8" fill="'+tone+'"/>');outParts.push(tx(58,y+110,'0',9,'#8e988d',400,true));outParts.push(tx(1070,y+110,maxValue.toLocaleString(),9,'#8e988d',400,true));}}y+=style==='ring'?130:style==='bar'?135:92;outParts.push(ln(y));y+=30;}
@@ -123,6 +136,8 @@ if(show.has('organizations')&&organizations.length){outParts.push(label(58,y,'Or
 const renderRepoCards=(heading:string,items:Json[])=>{if(!items.length)return;outParts.push(label(58,y,heading));const cw=526,ch=82;items.forEach((r:Json,i:number)=>{const x=58+(i%2)*558,yy=y+17+Math.floor(i/2)*(ch+10);outParts.push('<rect x="'+x+'" y="'+yy+'" width="'+cw+'" height="'+ch+'" fill="#09090d" stroke="#303038"/>');outParts.push(tx(x+14,yy+24,r.name||'Repository',13,fg,500));outParts.push(tx(x+14,yy+45,String(r.description||'').slice(0,72),9,'#a1a1aa'));outParts.push(tx(x+14,yy+66,'★ '+Number(r.stargazerCount||0)+'   Forks '+Number(r.forkCount||0)+'   '+(r.primaryLanguage?.name||''),9,'#bdbdc4',400,true));const href=safeUrl(r.url);if(href)outParts.push('<a href="'+href+'"><rect x="'+x+'" y="'+yy+'" width="'+cw+'" height="'+ch+'" fill="transparent"/></a>');});y+=Math.ceil(items.length/2)*(ch+10)+35;};
 if(show.has('pinnedRepos'))renderRepoCards('Pinned repositories',pinnedRepos);
 if(show.has('topRepos'))renderRepoCards('Top repositories by stars',topRepos);
+if(show.has('contributedRepos'))renderRepoCards('Repositories contributed to',contributedRepos.slice(0,6));
+if(show.has('projects')&&projects.length){outParts.push(label(58,y,'GitHub Projects'));projects.slice(0,8).forEach((p:Json,i:number)=>{const x=58+(i%2)*558,yy=y+17+Math.floor(i/2)*54;outParts.push('<rect x="'+x+'" y="'+yy+'" width="526" height="42" fill="#09090d" stroke="#303038"/>');outParts.push(tx(x+14,yy+26,p.title||'Project',11,fg,500));const href=safeUrl(p.url);if(href)outParts.push('<a href="'+href+'"><rect x="'+x+'" y="'+yy+'" width="526" height="42" fill="transparent"/></a>');});y+=Math.ceil(Math.min(8,projects.length)/2)*54+35;outParts.push(ln(y));y+=30;}
 if(show.has('repositories')&&repoCount)outParts.push(tx(58,y,'PUBLIC REPOSITORIES  '+repoCount.toLocaleString(),10,'#bdbdc4',500,true));
 const height=Math.max(500,y+54);
 const cornerArt=(kind:Corner,x:number,y:number,fx=false,fy=false)=>{if(kind==='fire'&&fireBody){return '<svg x="'+x+'" y="'+y+'" width="118" height="92" viewBox="'+fireViewBox+'" preserveAspectRatio="xMidYMid meet">'+fireBody+'</svg>';}return motif(kind,x,y,fx,fy);};
