@@ -1,9 +1,20 @@
 import fs from 'node:fs/promises';
 import path from 'node:path';
+import { isPiece, load } from 'ascii.rest';
+import { svg as asciiSvg } from 'ascii.rest/svg';
 
 type Json = Record<string, any>;
-type Corner = 'none'|'fire'|'titan'|'demon'|'cursed'|'chakra'|'pirate'|'spirit'|'hunter'|'dragon';
+type Corner = 'none'|'fire'|'titan'|'demon'|'cursed'|'chakra'|'pirate'|'spirit'|'hunter'|'dragon'|'moon'|'vines'|'cave';
 const config = JSON.parse(await fs.readFile(process.env.GITBREATHING_CONFIG || 'gitbreathing.json','utf8')) as Json;
+const fireName = 'doom-fire';
+const firePiece = isPiece(fireName) ? await load[fireName]() : null;
+const fireSvg = firePiece ? asciiSvg(firePiece, { dark: true, seconds: 4, fps: 12, scale: 2, label: 'Animated ASCII breathing fire' }) : '';
+const fireViewStart = fireSvg.indexOf('viewBox="');
+const fireViewEnd = fireViewStart >= 0 ? fireSvg.indexOf('"', fireViewStart + 9) : -1;
+const fireViewBox = fireViewStart >= 0 && fireViewEnd > fireViewStart ? fireSvg.slice(fireViewStart + 9, fireViewEnd) : '0 0 80 24';
+const fireOpenEnd = fireSvg.indexOf('>');
+const fireCloseStart = fireSvg.lastIndexOf('</svg>');
+const fireBody = fireOpenEnd >= 0 && fireCloseStart > fireOpenEnd ? fireSvg.slice(fireOpenEnd + 1, fireCloseStart) : '';
 const readme = config.readme ?? {};
 const show = new Set<string>(readme.show ?? ['name','bio','location','company','website','socials','orcid','followers','following','repositories','stars','languages','contributions','dailyContributions','pinnedRepos']);
 const out = config.outputDir || 'dist';
@@ -12,10 +23,11 @@ try { profile = JSON.parse(await fs.readFile(path.join(out,'profile-data.json'),
 const user: Json = profile.data?.user ?? profile.user ?? profile;
 const calendar = user.contributionsCollection?.contributionCalendar ?? user.contributionCalendar ?? {};
 const days = (calendar.weeks ?? []).flatMap((w: Json) => w.contributionDays ?? []);
-const repos = (user.pinnedItems?.nodes ?? user.repositories?.nodes ?? []).filter(Boolean).slice(0,6);
+const pinnedRepos = (user.pinnedItems?.nodes ?? []).filter(Boolean).slice(0,6);
+const topRepos = (user.repositories?.nodes ?? []).filter(Boolean).slice(0,6);
 const socialNodes = user.socialAccounts?.nodes ?? user.socialAccounts ?? [];
 const manualSocials = config.socials ?? {};
-const socials = [...socialNodes.map((s: Json) => ({name:s.provider || 'Social',url:s.url})), ...Object.entries(manualSocials).map(([name,url])=>({name,url}))].filter((s: Json)=>s.url);
+const socials = [...socialNodes.map((s: Json) => ({name:s.provider || 'Social',url:s.url})), ...(user.twitterUsername ? [{name:'X',url:'https://x.com/'+encodeURIComponent(user.twitterUsername)}] : []), ...Object.entries(manualSocials).map(([name,url])=>({name,url}))].filter((s: Json)=>s.url).filter((s: Json,i:number,a:Json[])=>a.findIndex((v:Json)=>String(v.name).toLowerCase()===String(s.name).toLowerCase())===i);
 const orcid = config.orcid || socials.find((s: Json)=>String(s.name).toLowerCase()==='orcid')?.url || '';
 const contributions = Number(calendar.totalContributions ?? user.contributions ?? config.contributions ?? 0);
 const visuals = readme.visualizations ?? {};
@@ -36,7 +48,8 @@ for (const r of (user.repositories?.nodes ?? repos)) {
 }
 const topLanguages=[...langs.entries()].sort((a,b)=>b[1].count-a[1].count).slice(0,6);
 const esc=(v:unknown)=>String(v??'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&apos;');
-const tx=(x:number,y:number,v:unknown,size=14,fill='#e8e9e4',weight=400,mono=false)=>'<text x="'+x+'" y="'+y+'" fill="'+fill+'" font-family="'+(mono?'IBM Plex Mono,monospace':'Manrope,Inter,Arial,sans-serif')+'" font-size="'+size+'" font-weight="'+weight+'">'+esc(v)+'</text>';
+const safeUrl=(v:unknown)=>{try{const u=new URL(String(v??''));return u.protocol==='https:'||u.protocol==='http:'?esc(u.toString()):'';}catch{return '';}};
+const tx=(x:number,y:number,v:unknown,size=14,fill='#ffffff',weight=400,mono=false)=>'<text x="'+x+'" y="'+y+'" fill="'+fill+'" font-family="Paper Mono,ui-monospace,monospace" font-size="'+size+'" font-weight="'+weight+'">'+esc(v)+'</text>';
 const ln=(y:number)=>'<path d="M54 '+y+'H1146" stroke="#343934" stroke-width="1"/>';
 const label=(x:number,y:number,v:string)=>tx(x,y,v.toUpperCase(),10,'#9da49b',500,true);
 const pill=(x:number,y:number,v:string)=>{const w=Math.min(220,Math.max(62,v.length*7+22));return '<rect x="'+x+'" y="'+(y-16)+'" width="'+w+'" height="26" rx="2" fill="#171b17" stroke="#3a4039"/>'+tx(x+11,y+1,v,10,'#cbd1c8',500,true);};
@@ -46,6 +59,9 @@ const motif=(kind:Corner,x:number,y:number,fx=false,fy=false)=>{
  if(kind==='fire')return g+'<path d="M0 104 C-8 70 23 59 17 25 C43 48 45 12 63 0 C62 42 91 45 83 77 C110 49 112 79 102 105" stroke="#c88d62" stroke-width="2"><animate attributeName="opacity" values=".65;1;.65" dur="2.4s" repeatCount="indefinite"/></path><path d="M28 105 C25 83 44 74 42 54 C57 70 68 61 67 43 C88 70 83 89 77 105" stroke="#e7bd91" stroke-width="1.5"><animateTransform attributeName="transform" type="translate" values="0 0;0 -4;0 0" dur="2.1s" repeatCount="indefinite"/></path></g>';
  const paths:Record<string,string>={
  titan:'<path d="M8 8 L50 96 L91 8 M50 96 L50 30 M20 31 L50 60 L80 31" stroke="#9ca99b" stroke-width="2"/><path d="M8 8 Q42 19 50 60 Q60 18 91 8" stroke="#d1d8cd"/>',
+ moon:'<circle cx="52" cy="52" r="40" stroke="#d8d8e0"/><path d="M65 14 C33 18 25 63 50 83 C21 78 8 44 25 20 C35 6 52 5 65 14Z" stroke="#b8b8c2"/>',
+ vines:'<path d="M8 100 C12 76 30 82 26 60 C22 42 43 40 40 20 M40 70 C60 60 59 40 76 32 M25 82 C8 70 8 55 12 46 M44 54 C58 48 67 54 74 64" stroke="#8eaa8c" stroke-width="2"/><path d="M12 46 l-8 -8 M40 20 l-7 -8 M76 32 l9 -8 M74 64 l10 4" stroke="#b8c9a9"/>,
+ cave:'<path d="M4 90 L18 40 L31 56 L48 8 L62 50 L79 28 L98 92 M4 90 H98" stroke="#a2a7a0" stroke-width="2"/><path d="M48 8 L48 42 M31 56 L25 78 M79 28 L84 58" stroke="#707a70"/>',
  demon:'<path d="M12 88 L88 12 M25 75 L10 62 M38 62 L23 49 M51 49 L36 36 M64 36 L49 23" stroke="#c88d62" stroke-width="3"/>',
  cursed:'<circle cx="52" cy="52" r="40" stroke="#9b8cba"/><circle cx="52" cy="52" r="25" stroke="#c2b1dc" stroke-dasharray="4 5"><animateTransform attributeName="transform" type="rotate" from="0 52 52" to="360 52 52" dur="18s" repeatCount="indefinite"/></circle>',
  chakra:'<path d="M52 52 C88 18 93 80 52 82 C15 83 17 22 52 22 C83 22 80 70 52 70 C30 70 31 37 52 37" stroke="#829db4" stroke-width="2"><animateTransform attributeName="transform" type="rotate" from="0 52 52" to="360 52 52" dur="24s" repeatCount="indefinite"/></path>',
