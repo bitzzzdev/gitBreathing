@@ -26,6 +26,8 @@ Configure `readme.show` in `gitbreathing.json` to select any combination of the 
 
 The workflow fetches public profile fields and the contribution calendar through GitHub GraphQL. Missing or private fields are omitted. Social accounts not exposed by GitHub can be added under `socials`, and ORCID can be set under `orcid`.
 
+GitHub Projects are fetched separately because GitHub's repository-scoped `GITHUB_TOKEN` cannot access Projects. To include the Projects field, add an optional `GH_PROJECT_TOKEN` Actions secret (or GitLab CI/CD variable) containing a classic personal access token with the `read:project` scope. Without it, the Projects section is omitted without blocking the rest of the profile render.
+
 ## Composition and anime-inspired corner art
 
 The generated profile follows the portfolio design system at [bitz.is-a.dev](https://bitz.is-a.dev/): Paper Mono typography, near-black surfaces, fine structural separators, monochrome data panels and a restrained cave-like atmosphere. The browser studio loads the same Paper Mono font files from the portfolio. The standalone SVG names Paper Mono with monospace fallbacks for GitHub's image renderer.
