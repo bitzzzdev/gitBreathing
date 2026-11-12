@@ -80,7 +80,7 @@ const motif=(kind:Corner,x:number,y:number,fx=false,fy=false)=>{
  const paths:Record<string,string>={
  titan:'<path d="M8 8 L50 96 L91 8 M50 96 L50 30 M20 31 L50 60 L80 31" stroke="#9ca99b" stroke-width="2"/><path d="M8 8 Q42 19 50 60 Q60 18 91 8" stroke="#d1d8cd"/>',
  moon:'<circle cx="52" cy="52" r="40" stroke="#d8d8e0"/><path d="M65 14 C33 18 25 63 50 83 C21 78 8 44 25 20 C35 6 52 5 65 14Z" stroke="#b8b8c2"/>',
- vines:'<path d="M8 100 C12 76 30 82 26 60 C22 42 43 40 40 20 M40 70 C60 60 59 40 76 32 M25 82 C8 70 8 55 12 46 M44 54 C58 48 67 54 74 64" stroke="#8eaa8c" stroke-width="2"/><path d="M12 46 l-8 -8 M40 20 l-7 -8 M76 32 l9 -8 M74 64 l10 4" stroke="#b8c9a9"/>,
+ vines:'<path d="M8 100 C12 76 30 82 26 60 C22 42 43 40 40 20 M40 70 C60 60 59 40 76 32 M25 82 C8 70 8 55 12 46 M44 54 C58 48 67 54 74 64" stroke="#8eaa8c" stroke-width="2"/><path d="M12 46 l-8 -8 M40 20 l-7 -8 M76 32 l9 -8 M74 64 l10 4" stroke="#b8c9a9"/>',,
  cave:'<path d="M4 90 L18 40 L31 56 L48 8 L62 50 L79 28 L98 92 M4 90 H98" stroke="#a2a7a0" stroke-width="2"/><path d="M48 8 L48 42 M31 56 L25 78 M79 28 L84 58" stroke="#707a70"/>',
  demon:'<path d="M12 88 L88 12 M25 75 L10 62 M38 62 L23 49 M51 49 L36 36 M64 36 L49 23" stroke="#c88d62" stroke-width="3"/>',
  cursed:'<circle cx="52" cy="52" r="40" stroke="#9b8cba"/><circle cx="52" cy="52" r="25" stroke="#c2b1dc" stroke-dasharray="4 5"><animateTransform attributeName="transform" type="rotate" from="0 52 52" to="360 52 52" dur="18s" repeatCount="indefinite"/></circle>',
