@@ -46,7 +46,7 @@ GitLab does not expose the same profile fields as GitHub. GitHub-only metrics su
 Requirements:
 
 - Node.js 22 or newer
-- A GitLab personal access token with the `api` scope for profile and event reads and generated-file write-back
+- A GitLab personal access token with `read_api` and `write_repository` scopes for profile and event reads and generated-file write-back
 
 Install dependencies:
 
@@ -76,7 +76,7 @@ Generated files are written to `dist/`.
 The project uses CircleCI with GitLab as the source repository. The configuration is in [`.circleci/config.yml`](.circleci/config.yml).
 
 1. Open the CircleCI project settings for `bitzzdev/gitbreathing`.
-2. Add an environment variable named `GITLAB_TOKEN`. Use a GitLab personal access token with the `api` scope.
+2. Add an environment variable named `GITLAB_TOKEN`. Use a GitLab personal access token with `read_api` and `write_repository` scopes.
 3. Push changes to the `dev` branch to run the pipeline.
 4. CircleCI installs dependencies, runs the TypeScript build and tests, fetches GitLab profile data, renders the assets and commits changed files under `dist/` to `dev`.
 

@@ -47,7 +47,7 @@ jobs:
           command: |
             git config user.name "GitBreathing CI"
             git config user.email "gitbreathing-bot@users.noreply.gitlab.com"
-            git add dist/slash.svg dist/slash.gif dist/slash.png dist/slash.txt dist/metadata.json dist/profile.svg dist/profile-data.json
+            git add -f dist/slash.svg dist/slash.gif dist/slash.png dist/slash.txt dist/metadata.json dist/profile.svg dist/profile-data.json
             if git diff --cached --quiet; then
               echo "Generated files are unchanged."
               exit 0

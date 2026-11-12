@@ -5,7 +5,7 @@ const token = process.env.GITLAB_TOKEN;
 const api = (process.env.CI_API_V4_URL || 'https://gitlab.com/api/v4').replace(/\/$/, '');
 
 if (!token) {
-  throw new Error('GITLAB_TOKEN is required. Add a GitLab personal access token with the api scope to CircleCI project environment variables.');
+  throw new Error('GITLAB_TOKEN is required. Add a GitLab personal access token with read_api and write_repository scopes to CircleCI project environment variables.');
 }
 
 async function get(path) {
