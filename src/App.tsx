@@ -73,7 +73,7 @@ export default function App() {
     const config = { username:user, platform, styles, maxContributions:max, powerCurve:curve, contributions:count,
       readme:{show:profileFields,layout:'editorial',theme:'portfolio-paper',animePreset,showCornerLabels,
         corners:cornerThemes,visualizations:{total:{enabled:true,style:totalStyle,palette:totalPalette},daily:{enabled:true,style:dailyStyle,palette:dailyPalette,cellSize,cellGap,weekdays}}} };
-    const url = URL.createObjectURL(new Blob([JSON.stringify(config,null,2)+'\\n'],{type:'application/json'}));
+    const url = URL.createObjectURL(new Blob([JSON.stringify(config,null,2)+'\n'],{type:'application/json'}));
     const anchor = document.createElement('a'); anchor.href=url; anchor.download='gitbreathing.json'; anchor.click(); URL.revokeObjectURL(url);
   };
 
