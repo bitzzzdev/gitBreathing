@@ -57,7 +57,7 @@ export default function App() {
   const [animePreset, setAnimePreset] = useState('original');
   const [showCornerLabels, setShowCornerLabels] = useState(false);
   const [orcidUrl, setOrcidUrl] = useState('');
-  const [socialLines, setSocialLines] = useState('Instagram|https://instagram.com/your-handle\\nLinkedIn|https://linkedin.com/in/your-handle\\nX|https://x.com/your-handle');
+  const [socialLines, setSocialLines] = useState('Instagram|https://instagram.com/your-handle\nLinkedIn|https://linkedin.com/in/your-handle\nX|https://x.com/your-handle');
 
   const power = useMemo(() => Math.pow(Math.min(1, count / Math.max(1, max)), curve), [count, max, curve]);
   const piece = useMemo(() => createBreathingPiece({ styles, power, seed: `${platform}:${user.toLowerCase()}` }), [styles, power, platform, user]);
@@ -72,7 +72,7 @@ export default function App() {
   const paletteClass = (palette: Palette) => `palette-${palette}`;
   const toggleProfileField = (field: ProfileField) => setProfileFields((items) => items.includes(field) ? items.filter((item) => item !== field) : [...items, field]);
   const downloadConfig = () => {
-    const socials = Object.fromEntries(socialLines.split('\\n').map((line) => line.split('|')).filter((parts) => parts.length >= 2 && parts[0].trim() && parts[1].trim()).map((parts) => [parts[0].trim(),parts[1].trim()]));
+    const socials = Object.fromEntries(socialLines.split('\n').map((line) => line.split('|')).filter((parts) => parts.length >= 2 && parts[0].trim() && parts[1].trim()).map((parts) => [parts[0].trim(),parts[1].trim()]));
     const config = { username:user, platform, styles, maxContributions:max, powerCurve:curve, contributions:count, orcid:orcidUrl, socials,
       readme:{show:profileFields,layout:'editorial',theme:'portfolio-paper',animePreset,showCornerLabels,
         corners:cornerThemes,visualizations:{total:{enabled:true,style:totalStyle,palette:totalPalette},daily:{enabled:true,style:dailyStyle,palette:dailyPalette,cellSize,cellGap,weekdays}}} };
