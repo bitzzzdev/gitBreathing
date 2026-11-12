@@ -4,7 +4,7 @@ import sharp from 'sharp';
 import { GIFEncoder, quantize, applyPalette } from 'gifenc';
 import { svg } from 'ascii.rest/svg';
 import { createBreathingPiece } from '../src/breathing';
-import { IDS, type StyleId } from '../src/styles';
+import { IDS, STYLES, type StyleId } from '../src/styles';
 
 type Config = {
   username: string;
@@ -124,7 +124,7 @@ const metadata = {
   contributions,
   power: Number(power.toFixed(4)),
   styles,
-  lineage: Object.fromEntries(styles.map((id) => [id, IDS.includes(id) ? id : null])),
+  lineage: Object.fromEntries(styles.map((id) => [id, STYLES[id].parent])),
   resolution: { columns: piece.meta.cols, rows: piece.meta.rows },
   frames,
   fps,

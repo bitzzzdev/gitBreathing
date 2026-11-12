@@ -5,34 +5,104 @@
     "sun",
     "moon",
     "water",
+    "flame",
+    "thunder",
+    "wind",
+    "stone",
+    "insect",
+    "serpent",
+    "flower",
+    "love",
+    "sound",
+    "beast",
     "mist"
   ],
   "styleWeights": {
     "sun": 1,
-    "moon": 0.8,
+    "moon": 1,
     "water": 1,
-    "mist": 0.7
+    "flame": 1,
+    "thunder": 1,
+    "wind": 1,
+    "stone": 1,
+    "insect": 1,
+    "serpent": 1,
+    "flower": 1,
+    "love": 1,
+    "sound": 1,
+    "beast": 1,
+    "mist": 1
   },
   "styleColors": {
     "sun": [
-      "#f97316",
-      "#facc15",
-      "#fff1a8"
+      "#f5b942",
+      "#ff7a1a",
+      "#fff0a6"
     ],
     "moon": [
-      "#7c3aed",
-      "#c4b5fd",
-      "#f5f3ff"
+      "#9b8cff",
+      "#c9baff",
+      "#f4efff"
     ],
     "water": [
-      "#0284c7",
-      "#38bdf8",
-      "#dbeafe"
+      "#167bd5",
+      "#42c7ed",
+      "#c4f5ff"
+    ],
+    "flame": [
+      "#e43b24",
+      "#ff7a22",
+      "#ffd166"
+    ],
+    "thunder": [
+      "#d5a900",
+      "#ffe34d",
+      "#fff7bd"
+    ],
+    "wind": [
+      "#278b59",
+      "#83d66b",
+      "#e3ffd0"
+    ],
+    "stone": [
+      "#777b83",
+      "#b5bbc4",
+      "#f0e9dd"
+    ],
+    "insect": [
+      "#7776d9",
+      "#b8a5ff",
+      "#f3dcff"
+    ],
+    "serpent": [
+      "#8771b9",
+      "#c5a8eb",
+      "#f1e5ff"
+    ],
+    "flower": [
+      "#e879aa",
+      "#ffb6cf",
+      "#fff0f5"
+    ],
+    "love": [
+      "#d83d83",
+      "#ff8fbd",
+      "#ffe0ed"
+    ],
+    "sound": [
+      "#bd762b",
+      "#f2b94b",
+      "#fff0b4"
+    ],
+    "beast": [
+      "#56627e",
+      "#929db5",
+      "#e2e8f0"
     ],
     "mist": [
-      "#0f766e",
-      "#5eead4",
-      "#ecfeff"
+      "#4e9b9c",
+      "#a2e1dd",
+      "#f1ffff"
     ]
   },
   "maxContributions": 5000,

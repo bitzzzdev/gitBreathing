@@ -11,7 +11,7 @@
     "render:preview": "CONTRIBUTIONS=1200 tsx scripts/render.ts"
   },
   "dependencies": {
-    "ascii.rest": "^1.0.0",
+    "ascii.rest": "^0.4.0",
     "gifenc": "^1.0.3",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
