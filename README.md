@@ -49,6 +49,7 @@ npm install
 cp config.example.json gitbreathing.json
 # Edit username, selected profile fields and corner motifs.
 npm run build
+npm test
 CONTRIBUTIONS=1200 npm run render
 npm run render:profile
 ```
