@@ -13,8 +13,10 @@ Contribution-powered, deterministic **animated ASCII breathing art** for GitHub 
 ## Preview
 
 <p align="center">
-  <img src="https://raw.githubusercontent.com/bitzzdev/gitBreathing/main/dist/slash.svg" width="480" alt="Animated GitBreathing ASCII artwork">
+  <img src="https://gitlab.com/bitzzdev/gitbreathing/-/raw/main/dist/slash.svg" width="480" alt="Animated GitBreathing ASCII artwork">
 </p>
+
+The demo config targets GitHub user `bitzzdev`. The image appears after a successful render has committed `dist/slash.svg` to this repository.
 
 The generated SVG is animated and works in GitHub READMEs without JavaScript. The GIF is provided for clients that do not animate SVG.
 
@@ -82,7 +84,7 @@ Each render overwrites `dist/`. Inspect `dist/metadata.json` for the resolved co
 Use the GIF if the target Markdown renderer does not animate SVG:
 
 ```md
-![GitBreathing animated slash](https://raw.githubusercontent.com/USERNAME/REPOSITORY/BRANCH/dist/slash.gif)
+![GitBreathing animated slash](https://gitlab.com/USERNAME/REPOSITORY/-/raw/BRANCH/dist/slash.gif)
 ```
 
 ## Configuration
