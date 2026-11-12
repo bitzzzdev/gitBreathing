@@ -1,13 +1,15 @@
+workflow:
+  rules:
+    - if: '$CI_PIPELINE_SOURCE == "push" && $CI_COMMIT_MESSAGE =~ /^chore: update GitBreathing artwork$/'
+      when: never
+    - when: always
+
 stages:
   - render
 
 render-gitbreathing:
   stage: render
   image: node:22-bookworm
-  rules:
-    - if: '$CI_PIPELINE_SOURCE == "schedule"'
-    - if: '$CI_PIPELINE_SOURCE == "web"'
-    - if: '$CI_PIPELINE_SOURCE == "push" && $CI_COMMIT_MESSAGE !~ /^chore: update GitBreathing artwork$/'
   before_script:
     - apt-get update -qq && apt-get install -y -qq git
     - npm install --no-audit --no-fund
