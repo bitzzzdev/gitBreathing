@@ -21,6 +21,7 @@ render-gitbreathing:
     set -eu
 
     npm run build
+    npm test
 
     if [ "${CI_PIPELINE_SOURCE}" = "merge_request_event" ]; then
       npm run render

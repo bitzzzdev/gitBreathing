@@ -110,14 +110,25 @@ if(show.has('bio')&&bio)outParts.push(tx(58,160,bio.slice(0,145),12,'#c4c4cc'));
 let px=58;
 if(show.has('location')&&location){outParts.push(pill(px,194,'⌖ '+location));px+=Math.min(230,location.length*7+45);}
 if(show.has('company')&&company){outParts.push(pill(px,194,company));px+=Math.min(220,company.length*7+32);}
-if(show.has('website')&&website){const href=safeUrl(website);outParts.push(href?'<a href="'+href+'">'+tx(58,225,website,10,'#ffffff',500,true)+'</a>':tx(58,225,website,10,'#ffffff',500,true));}
-if(show.has('email')&&user.email)outParts.push(tx(58,242,'EMAIL  '+user.email,10,'#aab6a8',400,true));
-if(show.has('joined')&&user.createdAt)outParts.push(tx(58,302,'GITHUB MEMBER SINCE  '+String(user.createdAt).slice(0,10),9,'#8e988d',400,true));
-if(show.has('socials')){let sx=58;for(const s of socials.slice(0,9)){const href=safeUrl(s.url);outParts.push(href?'<a href="'+href+'">'+pill(sx,258,String(s.name))+'</a>':pill(sx,258,String(s.name)));sx+=Math.min(210,String(s.name).length*7+32);if(sx>1030)break;}}
-if(show.has('twitter')&&twitterUrl){const href=safeUrl(twitterUrl);const handle=user.twitterUsername?'X  @'+user.twitterUsername:'X / Twitter';outParts.push(href?'<a href="'+href+'">'+tx(58,275,handle,9,'#ffffff',400,true)+'</a>':tx(58,275,handle,9,'#ffffff',400,true));}
-if(show.has('orcid')&&orcid){const href=safeUrl(orcid);outParts.push(href?'<a href="'+href+'">'+tx(58,286,'ORCID  '+orcid,10,'#ffffff',400,true)+'</a>':tx(58,286,'ORCID  '+orcid,10,'#ffffff',400,true));}
-outParts.push(ln(310));
-let y=340;
+let headerY=214;
+if(show.has('website')&&website){const href=safeUrl(website);outParts.push(href?'<a href="'+href+'">'+tx(58,headerY+11,website,10,'#ffffff',500,true)+'</a>':tx(58,headerY+11,website,10,'#ffffff',500,true));headerY+=27;}
+if(show.has('socials')&&socials.length){
+ let sx=58,socialY=headerY+15;
+ for(const s of socials.slice(0,12)){
+  const name=String(s.name),width=Math.min(220,Math.max(62,name.length*7+22));
+  if(sx+width>1142){sx=58;socialY+=32;}
+  const href=safeUrl(s.url);
+  outParts.push(href?'<a href="'+href+'">'+pill(sx,socialY,name)+'</a>':pill(sx,socialY,name));
+  sx+=width+10;
+ }
+ headerY=socialY+24;
+}
+if(show.has('twitter')&&twitterUrl){const href=safeUrl(twitterUrl);const handle=user.twitterUsername?'X  @'+user.twitterUsername:'X / Twitter';outParts.push(href?'<a href="'+href+'">'+tx(58,headerY+12,handle,9,'#ffffff',400,true)+'</a>':tx(58,headerY+12,handle,9,'#ffffff',400,true));headerY+=22;}
+if(show.has('orcid')&&orcid){const href=safeUrl(orcid);outParts.push(href?'<a href="'+href+'">'+tx(58,headerY+12,'ORCID  '+orcid,10,'#ffffff',400,true)+'</a>':tx(58,headerY+12,'ORCID  '+orcid,10,'#ffffff',400,true));headerY+=22;}
+if(show.has('email')&&user.email){outParts.push(tx(58,headerY+12,'EMAIL  '+user.email,10,'#aab6a8',400,true));headerY+=22;}
+if(show.has('joined')&&user.createdAt){outParts.push(tx(58,headerY+12,'GITHUB MEMBER SINCE  '+String(user.createdAt).slice(0,10),9,'#8e988d',400,true));headerY+=22;}
+outParts.push(ln(headerY+8));
+let y=headerY+38;
 const profileDetails:string[]=[];
 if(show.has('pronouns')&&user.pronouns)profileDetails.push('PRONOUNS  '+user.pronouns);
 if(show.has('status')&&user.status?.message)profileDetails.push('STATUS  '+user.status.message);
