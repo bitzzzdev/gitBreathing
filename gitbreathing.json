@@ -1,0 +1,54 @@
+{
+  "username": "bitzzdev",
+  "platform": "github",
+  "styles": [
+    "sun",
+    "moon",
+    "water",
+    "mist"
+  ],
+  "styleWeights": {
+    "sun": 1,
+    "moon": 0.8,
+    "water": 1,
+    "mist": 0.7
+  },
+  "styleColors": {
+    "sun": [
+      "#f97316",
+      "#facc15",
+      "#fff1a8"
+    ],
+    "moon": [
+      "#7c3aed",
+      "#c4b5fd",
+      "#f5f3ff"
+    ],
+    "water": [
+      "#0284c7",
+      "#38bdf8",
+      "#dbeafe"
+    ],
+    "mist": [
+      "#0f766e",
+      "#5eead4",
+      "#ecfeff"
+    ]
+  },
+  "maxContributions": 5000,
+  "resolution": 128,
+  "frames": 24,
+  "fps": 12,
+  "powerCurve": 1,
+  "background": "transparent",
+  "seed": "",
+  "outputDir": "dist",
+  "effects": {
+    "glow": true,
+    "particles": true,
+    "secondaryCuts": true,
+    "motion": true,
+    "particleDensity": 1,
+    "strokeScale": 1
+  }
+}
