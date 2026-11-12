@@ -7,16 +7,16 @@ type Mode = 'both' | 'total' | 'daily';
 type TotalStyle = 'number' | 'bar' | 'ring';
 type DailyStyle = 'heatmap' | 'bars';
 type Palette = 'mono' | 'ember' | 'ocean';
-type ProfileField = 'avatar' | 'name' | 'username' | 'bio' | 'location' | 'company' | 'website' | 'socials' | 'twitter' | 'orcid' | 'followers' | 'following' | 'repositories' | 'stars' | 'languages' | 'contributions' | 'dailyContributions' | 'pinnedRepos' | 'topRepos' | 'commits' | 'pullRequests' | 'issues' | 'reviews' | 'gists' | 'organizations' | 'starredRepos' | 'email' | 'joined' | 'streak';
+type ProfileField = 'avatar' | 'name' | 'username' | 'bio' | 'location' | 'company' | 'website' | 'socials' | 'twitter' | 'orcid' | 'followers' | 'following' | 'repositories' | 'stars' | 'languages' | 'contributions' | 'dailyContributions' | 'pinnedRepos' | 'topRepos' | 'commits' | 'pullRequests' | 'issues' | 'reviews' | 'gists' | 'organizations' | 'starredRepos' | 'email' | 'joined' | 'streak' | 'pronouns' | 'status' | 'hireable' | 'programs' | 'projects' | 'contributedRepos' | 'discussions' | 'comments';
 type CornerTheme = 'none' | 'fire' | 'titan' | 'demon' | 'cursed' | 'chakra' | 'pirate' | 'spirit' | 'hunter' | 'dragon' | 'moon' | 'vines' | 'cave';
 const PROFILE_FIELDS: {id: ProfileField; label: string}[] = [
   {id:'avatar',label:'Profile avatar'},{id:'name',label:'Display name'},{id:'username',label:'GitHub username'},{id:'bio',label:'Bio'},{id:'location',label:'Location'},{id:'company',label:'Company'},
   {id:'website',label:'Website'},{id:'socials',label:'Social accounts'},{id:'twitter',label:'X / Twitter'},{id:'orcid',label:'ORCID'},
   {id:'followers',label:'Followers'},{id:'following',label:'Following'},{id:'repositories',label:'Public repositories'},
   {id:'stars',label:'Received stars'},{id:'languages',label:'Top languages'},{id:'contributions',label:'Total contributions'},
-  {id:'dailyContributions',label:'Daily contribution calendar'},{id:'streak',label:'Contribution streak'},{id:'pinnedRepos',label:'Pinned repositories'},{id:'topRepos',label:'Top repositories'},
+  {id:'dailyContributions',label:'Daily contribution calendar'},{id:'streak',label:'Contribution streak'},{id:'pronouns',label:'Pronouns'},{id:'status',label:'GitHub status'},{id:'hireable',label:'Open to work status'},{id:'programs',label:'GitHub programs and badges'},{id:'pinnedRepos',label:'Pinned repositories'},{id:'topRepos',label:'Top repositories'},{id:'contributedRepos',label:'Repositories contributed to'},{id:'projects',label:'GitHub Projects'},
   {id:'commits',label:'Commit contributions'},{id:'pullRequests',label:'Pull request contributions'},{id:'issues',label:'Issue contributions'},
-  {id:'reviews',label:'Code review contributions'},{id:'gists',label:'Public gists'},{id:'organizations',label:'Organizations'},{id:'starredRepos',label:'Starred repositories'},{id:'email',label:'Public email'},{id:'joined',label:'GitHub join date'}
+  {id:'reviews',label:'Code review contributions'},{id:'discussions',label:'Discussions started'},{id:'comments',label:'Comments authored'},{id:'gists',label:'Public gists'},{id:'organizations',label:'Organizations'},{id:'starredRepos',label:'Starred repositories'},{id:'email',label:'Public email'},{id:'joined',label:'GitHub join date'}
 ];
 const CORNER_THEMES: {id: CornerTheme; label: string}[] = [
   {id:'none',label:'None'},{id:'fire',label:'Breathing fire'},{id:'titan',label:'Titan / freedom wings motif'},
@@ -52,7 +52,7 @@ export default function App() {
   const [cellSize, setCellSize] = useState(10);
   const [cellGap, setCellGap] = useState(3);
   const [weekdays, setWeekdays] = useState(true);
-  const [profileFields, setProfileFields] = useState<ProfileField[]>(['avatar','name','username','bio','socials','twitter','orcid','location','website','followers','following','repositories','stars','languages','contributions','dailyContributions','streak','pinnedRepos','topRepos','commits','pullRequests','issues','reviews','gists','organizations','starredRepos','email','joined']);
+  const [profileFields, setProfileFields] = useState<ProfileField[]>(['avatar','name','username','bio','socials','twitter','orcid','location','website','followers','following','repositories','stars','languages','contributions','dailyContributions','streak','pronouns','status','hireable','programs','pinnedRepos','topRepos','contributedRepos','projects','commits','pullRequests','issues','reviews','discussions','comments','gists','organizations','starredRepos','email','joined']);
   const [cornerThemes, setCornerThemes] = useState<Record<'topLeft'|'topRight'|'bottomLeft'|'bottomRight', CornerTheme>>({topLeft:'fire',topRight:'titan',bottomLeft:'demon',bottomRight:'fire'});
   const [animePreset, setAnimePreset] = useState('original');
   const [showCornerLabels, setShowCornerLabels] = useState(false);
