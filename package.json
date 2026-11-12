@@ -10,7 +10,8 @@
     "render": "tsx scripts/render.ts",
     "render:preview": "CONTRIBUTIONS=1200 tsx scripts/render.ts",
     "render:profile": "tsx scripts/profile.ts",
-    "test": "node --test tests/*.test.mjs"
+    "test": "node --test tests/*.test.mjs",
+    "profile:fetch": "node scripts/fetch-gitlab-profile.mjs"
   },
   "dependencies": {
     "ascii.rest": "^0.4.0",

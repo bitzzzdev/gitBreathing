@@ -1,0 +1,65 @@
+version: 2.1
+
+jobs:
+  render:
+    docker:
+      - image: cimg/node:22.14
+    working_directory: ~/project
+    steps:
+      - checkout
+      - restore_cache:
+          keys:
+            - npm-v1-{{ checksum "package.json" }}
+            - npm-v1-
+      - run:
+          name: Install dependencies
+          command: npm install --no-audit --no-fund
+      - save_cache:
+          key: npm-v1-{{ checksum "package.json" }}
+          paths:
+            - ~/.npm
+      - run:
+          name: Build
+          command: npm run build
+      - run:
+          name: Test
+          command: npm test
+      - run:
+          name: Fetch GitLab profile data
+          command: |
+            test -n "${GITLAB_TOKEN:-}" || {
+              echo "Set GITLAB_TOKEN in CircleCI project environment variables." >&2
+              exit 1
+            }
+            CONTRIBUTIONS="$(node scripts/fetch-gitlab-profile.mjs)"
+            echo "export CONTRIBUTIONS='${CONTRIBUTIONS}'" >> "$BASH_ENV"
+      - run:
+          name: Render profile and artwork
+          command: |
+            source "$BASH_ENV"
+            npm run render
+            npm run render:profile
+      - store_artifacts:
+          path: dist
+          destination: gitbreathing
+      - run:
+          name: Publish generated files to GitLab dev
+          command: |
+            git config user.name "GitBreathing CI"
+            git config user.email "gitbreathing-bot@users.noreply.gitlab.com"
+            git add dist/slash.svg dist/slash.gif dist/slash.png dist/slash.txt dist/metadata.json dist/profile.svg dist/profile-data.json
+            if git diff --cached --quiet; then
+              echo "Generated files are unchanged."
+              exit 0
+            fi
+            git commit -m "chore: refresh generated README assets [skip ci]"
+            git remote set-url origin "https://oauth2:${GITLAB_TOKEN}@gitlab.com/bitzzdev/gitbreathing.git"
+            git push origin HEAD:dev
+
+workflows:
+  gitbreathing:
+    jobs:
+      - render:
+          filters:
+            branches:
+              only: dev

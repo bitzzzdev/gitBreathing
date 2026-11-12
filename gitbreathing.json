@@ -1,6 +1,6 @@
 {
   "username": "bitzzdev",
-  "platform": "github",
+  "platform": "gitlab",
   "styles": [
     "sun",
     "water",
@@ -55,29 +55,20 @@
   "readme": {
     "show": [
       "name",
+      "username",
       "bio",
+      "pronouns",
+      "location",
+      "company",
+      "website",
       "socials",
       "twitter",
       "orcid",
-      "location",
-      "website",
-      "followers",
-      "following",
       "repositories",
       "stars",
-      "languages",
       "contributions",
       "dailyContributions",
-      "pinnedRepos",
-      "commits",
-      "pullRequests",
-      "issues",
-      "reviews",
-      "gists",
-      "organizations",
-      "starredRepos",
-      "email",
-      "joined"
+      "topRepos"
     ],
     "layout": "editorial",
     "theme": "portfolio-paper",
