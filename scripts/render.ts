@@ -2,7 +2,7 @@ import fs from 'node:fs/promises';
 import path from 'node:path';
 import sharp from 'sharp';
 import { GIFEncoder, quantize, applyPalette } from 'gifenc';
-import { renderSlash, pixelsToSvg } from '../src/renderer';
+import { renderSlash, pixelsToSvg, type Background } from '../src/renderer';
 import { IDS, type StyleId } from '../src/styles';
 
 type Config = {
@@ -15,7 +15,7 @@ type Config = {
   frames?: number;
   fps?: number;
   powerCurve?: number;
-  background?: 'transparent' | 'dark';
+  background?: Background;
   seed?: string;
   styleWeights?: Partial<Record<StyleId, number>>;
   styleColors?: Partial<Record<StyleId, string[]>>;
@@ -38,7 +38,7 @@ const maxSize = Math.max(8, Math.min(128, Math.round(Number(config.resolution ??
 const size = Math.max(8, Math.min(maxSize, Math.round(8 + (maxSize - 8) * Math.sqrt(power))));
 const frames = Math.max(4, Math.min(60, Math.round(Number(config.frames ?? 24))));
 const fps = Math.max(4, Math.min(30, Math.round(Number(config.fps ?? 12))));
-const background = config.background === 'dark' ? 'dark' : 'transparent';
+const background: Background = config.background === 'dark' ? 'dark' : 'transparent';
 const seed = config.seed || `${config.platform || 'custom'}:${username.toLowerCase()}:${styles.join(',')}`;
 const outputDir = config.outputDir || 'dist';
 await fs.mkdir(outputDir, { recursive: true });
@@ -67,7 +67,7 @@ await fs.writeFile(path.join(outputDir, 'slash.gif'), Buffer.from(gif.bytes()));
 
 const metadata = {
   generator: 'GitBreathing', version: '1.0.0', username, platform: config.platform || 'custom',
-  contributions, power: Number(power.toFixed(4)), styles, resolution: size, maxResolution: maxSize, frames, fps,
+  contributions, power: Number(power.toFixed(4)), styles, resolution: size, maxResolution: max, frames, fps,
   seed, outputs: ['slash.svg', 'slash.gif', 'slash.png'],
 };
 await fs.writeFile(path.join(outputDir, 'metadata.json'), `${JSON.stringify(metadata, null, 2)}\n`);
