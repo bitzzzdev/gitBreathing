@@ -2,6 +2,8 @@ name: Update GitBreathing
 on:
   workflow_dispatch:
   push:
+    branches:
+      - dev
     paths-ignore:
       - dist/**
   schedule:
@@ -10,6 +12,7 @@ permissions:
   contents: write
 jobs:
   render:
+    if: github.ref == 'refs/heads/dev'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -19,19 +22,30 @@ jobs:
         with:
           node-version: 22
       - run: npm install --no-audit --no-fund
+      - run: npm run build
+      - run: npm test
       - name: Fetch GitHub profile and contribution data
         env:
-          GH_TOKEN: \${{ secrets.GITHUB_TOKEN }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_PROJECT_TOKEN: ${{ secrets.GH_PROJECT_TOKEN }}
         shell: bash
         run: |
           set -euo pipefail
           USERNAME=$(node -p "JSON.parse(require('fs').readFileSync('gitbreathing.json','utf8')).username")
-          QUERY='query($login:String!){user(login:$login){login name bio location company websiteUrl avatarUrl twitterUsername email createdAt followers(first:1){totalCount} following(first:1){totalCount} repositories(first:100,privacy:PUBLIC,ownerAffiliations:OWNER,orderBy:{field:STARGAZERS,direction:DESC}){totalCount nodes{name url description stargazerCount forkCount primaryLanguage{name color}}} starredRepositories(first:1){totalCount} gists(first:1){totalCount} organizations(first:20){totalCount nodes{login name url}} socialAccounts(first:20){nodes{provider url}} pinnedItems(first:6,types:[REPOSITORY]){nodes{... on Repository{name url description stargazerCount forkCount primaryLanguage{name color}}}} contributionsCollection{totalCommitContributions totalIssueContributions totalPullRequestContributions totalPullRequestReviewContributions contributionCalendar{totalContributions weeks{contributionDays{date contributionCount color}}}}}}'
+          QUERY='query($login:String!){user(login:$login){login name bio bioHTML pronouns status{emoji message indicatesLimitedAvailability} location company websiteUrl avatarUrl twitterUsername email createdAt updatedAt isHireable hasSponsorsListing isCampusExpert isDeveloperProgramMember isGitHubStar followers(first:1){totalCount} following(first:1){totalCount} repositories(first:100,privacy:PUBLIC,ownerAffiliations:OWNER,orderBy:{field:STARGAZERS,direction:DESC}){totalCount nodes{name url description stargazerCount forkCount primaryLanguage{name color}}} repositoriesContributedTo(first:20,contributionTypes:[COMMIT,ISSUE,PULL_REQUEST,PULL_REQUEST_REVIEW,REPOSITORY]){totalCount nodes{name url description stargazerCount forkCount primaryLanguage{name color}}}  starredRepositories(first:1){totalCount} gists(first:1){totalCount} organizations(first:20){totalCount nodes{login name url}} socialAccounts(first:20){nodes{provider url}} pinnedItems(first:6,types:[REPOSITORY]){nodes{... on Repository{name url description stargazerCount forkCount primaryLanguage{name color}}}} repositoryDiscussions(first:1){totalCount} repositoryDiscussionComments(first:1){totalCount} issueComments(first:1){totalCount} commitComments(first:1){totalCount} contributionsCollection{totalCommitContributions totalIssueContributions totalPullRequestContributions totalPullRequestReviewContributions contributionCalendar{totalContributions weeks{contributionDays{date contributionCount color}}}}}}'
           BODY=$(jq -n --arg q "$QUERY" --arg u "$USERNAME" '{query:$q,variables:{login:$u}}')
           RESPONSE=$(curl --fail-with-body -fsS -H "Authorization: bearer $GH_TOKEN" -H 'Content-Type: application/json' -d "$BODY" https://api.github.com/graphql)
           printf '%s' "$RESPONSE" | jq -e '.data.user' >/dev/null
           mkdir -p dist
           printf '%s' "$RESPONSE" | jq '{data:.data}' > dist/profile-data.json
+          if [ -n "${GH_PROJECT_TOKEN:-}" ]; then
+            PROJECT_QUERY='query($login:String!){user(login:$login){projectsV2(first:20){totalCount nodes{id title url}}}}'
+            PROJECT_BODY=$(jq -n --arg q "$PROJECT_QUERY" --arg u "$USERNAME" '{query:$q,variables:{login:$u}}')
+            PROJECT_RESPONSE=$(curl --fail-with-body -fsS -H "Authorization: bearer $GH_PROJECT_TOKEN" -H 'Content-Type: application/json' -d "$PROJECT_BODY" https://api.github.com/graphql)
+            PROJECTS=$(printf '%s' "$PROJECT_RESPONSE" | jq -ce '.data.user.projectsV2')
+            jq --argjson projects "$PROJECTS" '.data.user.projectsV2=$projects' dist/profile-data.json > dist/profile-data.json.tmp
+            mv dist/profile-data.json.tmp dist/profile-data.json
+          fi
           TOTAL=$(printf '%s' "$RESPONSE" | jq -er '.data.user.contributionsCollection.contributionCalendar.totalContributions')
           echo "CONTRIBUTIONS=$TOTAL" >> "$GITHUB_ENV"
       - run: npm run render

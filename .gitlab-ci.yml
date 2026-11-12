@@ -1,18 +1,34 @@
+workflow:
+  rules:
+    - if: '$CI_PIPELINE_SOURCE == "push" && $CI_COMMIT_MESSAGE =~ /^chore: update GitBreathing artwork$/'
+      when: never
+    - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
+      when: always
+    - if: '$CI_COMMIT_BRANCH == "dev"'
+      when: always
+    - when: never
+
 stages:
   - render
 
 render-gitbreathing:
   stage: render
   image: node:22-bookworm
-  rules:
-    - if: '$CI_PIPELINE_SOURCE == "schedule"'
-    - if: '$CI_PIPELINE_SOURCE == "web"'
-    - if: '$CI_PIPELINE_SOURCE == "push" && $CI_COMMIT_MESSAGE !~ /^chore: update GitBreathing artwork$/'
   before_script:
-    - apt-get update -qq && apt-get install -y -qq git
+    - apt-get update -qq && apt-get install -y -qq git jq curl
     - npm install --no-audit --no-fund
   script: |
     set -eu
+
+    npm run build
+    npm test
+
+    if [ "${CI_PIPELINE_SOURCE}" = "merge_request_event" ]; then
+      npm run render
+      npm run render:profile
+      echo "Merge request validation complete. Generated files are not committed from MR pipelines."
+      exit 0
+    fi
 
     if [ -z "${GITLAB_TOKEN:-}" ]; then
       echo "Set a masked GITLAB_TOKEN with API read and repository write access." >&2
@@ -41,12 +57,20 @@ render-gitbreathing:
 
     if [ -n "${GH_TOKEN:-}" ]; then
       USERNAME=$(node -p "JSON.parse(require('fs').readFileSync('gitbreathing.json','utf8')).username")
-      QUERY='query($login:String!){user(login:$login){login name bio location company websiteUrl avatarUrl twitterUsername email createdAt followers(first:1){totalCount} following(first:1){totalCount} repositories(first:100,privacy:PUBLIC,ownerAffiliations:OWNER,orderBy:{field:STARGAZERS,direction:DESC}){totalCount nodes{name url description stargazerCount forkCount primaryLanguage{name color}}} starredRepositories(first:1){totalCount} gists(first:1){totalCount} organizations(first:20){totalCount nodes{login name url}} socialAccounts(first:20){nodes{provider url}} pinnedItems(first:6,types:[REPOSITORY]){nodes{... on Repository{name url description stargazerCount forkCount primaryLanguage{name color}}}} contributionsCollection{totalCommitContributions totalIssueContributions totalPullRequestContributions totalPullRequestReviewContributions contributionCalendar{totalContributions weeks{contributionDays{date contributionCount color}}}}}}'
+      QUERY='query($login:String!){user(login:$login){login name bio bioHTML pronouns status{emoji message indicatesLimitedAvailability} location company websiteUrl avatarUrl twitterUsername email createdAt updatedAt isHireable hasSponsorsListing isCampusExpert isDeveloperProgramMember isGitHubStar followers(first:1){totalCount} following(first:1){totalCount} repositories(first:100,privacy:PUBLIC,ownerAffiliations:OWNER,orderBy:{field:STARGAZERS,direction:DESC}){totalCount nodes{name url description stargazerCount forkCount primaryLanguage{name color}}} repositoriesContributedTo(first:20,contributionTypes:[COMMIT,ISSUE,PULL_REQUEST,PULL_REQUEST_REVIEW,REPOSITORY]){totalCount nodes{name url description stargazerCount forkCount primaryLanguage{name color}}}  starredRepositories(first:1){totalCount} gists(first:1){totalCount} organizations(first:20){totalCount nodes{login name url}} socialAccounts(first:20){nodes{provider url}} pinnedItems(first:6,types:[REPOSITORY]){nodes{... on Repository{name url description stargazerCount forkCount primaryLanguage{name color}}}} repositoryDiscussions(first:1){totalCount} repositoryDiscussionComments(first:1){totalCount} issueComments(first:1){totalCount} commitComments(first:1){totalCount} contributionsCollection{totalCommitContributions totalIssueContributions totalPullRequestContributions totalPullRequestReviewContributions contributionCalendar{totalContributions weeks{contributionDays{date contributionCount color}}}}}}'
       BODY=$(jq -n --arg q "$QUERY" --arg u "$USERNAME" '{query:$q,variables:{login:$u}}')
       RESPONSE=$(curl --fail-with-body -fsS --header "Authorization: bearer $GH_TOKEN" --header 'Content-Type: application/json' --data "$BODY" https://api.github.com/graphql)
       printf '%s' "$RESPONSE" | jq -e '.data.user' >/dev/null
       mkdir -p dist
       printf '%s' "$RESPONSE" | jq '{data:.data}' > dist/profile-data.json
+      if [ -n "${GH_PROJECT_TOKEN:-}" ]; then
+        PROJECT_QUERY='query($login:String!){user(login:$login){projectsV2(first:20){totalCount nodes{id title url}}}}'
+        PROJECT_BODY=$(jq -n --arg q "$PROJECT_QUERY" --arg u "$USERNAME" '{query:$q,variables:{login:$u}}')
+        PROJECT_RESPONSE=$(curl --fail-with-body -fsS --header "Authorization: bearer $GH_PROJECT_TOKEN" --header 'Content-Type: application/json' --data "$PROJECT_BODY" https://api.github.com/graphql)
+        PROJECTS=$(printf '%s' "$PROJECT_RESPONSE" | jq -ce '.data.user.projectsV2')
+        jq --argjson projects "$PROJECTS" '.data.user.projectsV2=$projects' dist/profile-data.json > dist/profile-data.json.tmp
+        mv dist/profile-data.json.tmp dist/profile-data.json
+      fi
     fi
 
     npm run render
@@ -56,7 +80,7 @@ render-gitbreathing:
     git add dist/slash.svg dist/slash.gif dist/slash.png dist/metadata.json dist/profile.svg dist/profile-data.json
     if ! git diff --cached --quiet; then
       git commit -m "chore: update GitBreathing artwork"
-      git push "https://oauth2:${GITLAB_TOKEN}@${CI_SERVER_HOST}/${CI_PROJECT_PATH}.git" "HEAD:${CI_DEFAULT_BRANCH}"
+      git push "https://oauth2:${GITLAB_TOKEN}@${CI_SERVER_HOST}/${CI_PROJECT_PATH}.git" "HEAD:dev"
     else
       echo "No artwork changes."
     fi

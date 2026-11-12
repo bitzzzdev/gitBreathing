@@ -14,31 +14,33 @@ No JavaScript, iframe, external widget or custom HTML script is required in the 
 
 ## What can be displayed
 
-Configure `readme.show` in `gitbreathing.json` to select any combination of:
+Configure `readme.show` in `gitbreathing.json` to select any combination of the available public fields. The studio exposes each field as an independent checkbox, including:
 
-- Display name, username, bio, location, company and website
+- Avatar, display name, username, bio, pronouns, status, hireability, location, company and website
 - GitHub social accounts and manually configured links
 - ORCID, including a manually supplied ORCID URL
 - Followers, following, public repositories, received stars, starred repositories, gists and organizations
-- Commit, pull request, issue and code-review contribution totals
-- Top repository languages and pinned repositories
+- Commit, pull request, issue, code-review, discussion and authored-comment totals, plus current and longest active-day streaks
+- Top repository languages, pinned repositories, top repositories by stars, contributed repositories and GitHub Projects
 - Total contributions and the daily contribution calendar
 
 The workflow fetches public profile fields and the contribution calendar through GitHub GraphQL. Missing or private fields are omitted. Social accounts not exposed by GitHub can be added under `socials`, and ORCID can be set under `orcid`.
 
+GitHub Projects are fetched separately because GitHub's repository-scoped `GITHUB_TOKEN` cannot access Projects. To include the Projects field, add an optional `GH_PROJECT_TOKEN` Actions secret (or GitLab CI/CD variable) containing a classic personal access token with the `read:project` scope. Without it, the Projects section is omitted without blocking the rest of the profile render.
+
 ## Composition and anime-inspired corner art
 
-The generated profile uses an editorial, paper-like dark layout with restrained typography, thin separators, metric columns, contribution heatmap, repository panels and configurable corner decorations.
+The generated profile follows the portfolio design system at [bitz.is-a.dev](https://bitz.is-a.dev/): Paper Mono typography, near-black surfaces, fine structural separators, monochrome data panels and a restrained cave-like atmosphere. The browser studio loads the same Paper Mono font files from the portfolio. The standalone SVG names Paper Mono with monospace fallbacks for GitHub's image renderer.
 
 Each corner can be configured independently in `readme.corners`:
 
-- `fire`: animated breathing flame
+- `fire`: animated `doom-fire` scene rendered through `ascii.rest` into a self-contained SVG
 - `titan`: original freedom-wing geometry
 - `demon`: original sword-form geometry
-- `cursed`, `chakra`, `pirate`, `spirit`, `hunter`, `dragon`
+- `cursed`, `chakra`, `pirate`, `spirit`, `hunter`, `dragon`, `moon`, `vines`, `cave`
 - `none`: no decoration
 
-The anime presets are original motifs inspired by broad genre visual language. They are not official anime artwork, character illustrations, studio logos or copied screenshots. This avoids bundling unlicensed show assets. For freely reusable animated ASCII scenes and effects, the renderer uses [ascii.rest](https://ascii.rest/), an MIT-licensed library.
+The studio includes presets for Attack on Titan, Demon Slayer, Jujutsu Kaisen, Naruto, One Piece, Bleach, Solo Leveling, Dragon Ball, Chainsaw Man, Hunter x Hunter, My Hero Academia, Tokyo Ghoul, JoJo's Bizarre Adventure, Frieren, Evangelion, Spy x Family and Fullmetal Alchemist. The anime presets are original motifs inspired by broad genre visual language. They are not official anime artwork, character illustrations, studio logos or copied screenshots. This avoids bundling unlicensed show assets. For freely reusable animated ASCII scenes and effects, the renderer uses [ascii.rest](https://ascii.rest/), an MIT-licensed library.
 
 ## Quick start
 
@@ -49,6 +51,7 @@ npm install
 cp config.example.json gitbreathing.json
 # Edit username, selected profile fields and corner motifs.
 npm run build
+npm test
 CONTRIBUTIONS=1200 npm run render
 npm run render:profile
 ```

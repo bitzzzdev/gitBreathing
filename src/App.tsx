@@ -7,21 +7,21 @@ type Mode = 'both' | 'total' | 'daily';
 type TotalStyle = 'number' | 'bar' | 'ring';
 type DailyStyle = 'heatmap' | 'bars';
 type Palette = 'mono' | 'ember' | 'ocean';
-type ProfileField = 'name' | 'bio' | 'location' | 'company' | 'website' | 'socials' | 'orcid' | 'followers' | 'following' | 'repositories' | 'stars' | 'languages' | 'contributions' | 'dailyContributions' | 'pinnedRepos' | 'commits' | 'pullRequests' | 'issues' | 'reviews' | 'gists' | 'organizations' | 'starredRepos' | 'email' | 'joined';
-type CornerTheme = 'none' | 'fire' | 'titan' | 'demon' | 'cursed' | 'chakra' | 'pirate' | 'spirit' | 'hunter' | 'dragon';
+type ProfileField = 'avatar' | 'name' | 'username' | 'bio' | 'location' | 'company' | 'website' | 'socials' | 'twitter' | 'orcid' | 'followers' | 'following' | 'repositories' | 'stars' | 'languages' | 'contributions' | 'dailyContributions' | 'pinnedRepos' | 'topRepos' | 'commits' | 'pullRequests' | 'issues' | 'reviews' | 'gists' | 'organizations' | 'starredRepos' | 'email' | 'joined' | 'streak' | 'pronouns' | 'status' | 'hireable' | 'programs' | 'projects' | 'contributedRepos' | 'discussions' | 'comments';
+type CornerTheme = 'none' | 'fire' | 'titan' | 'demon' | 'cursed' | 'chakra' | 'pirate' | 'spirit' | 'hunter' | 'dragon' | 'moon' | 'vines' | 'cave';
 const PROFILE_FIELDS: {id: ProfileField; label: string}[] = [
-  {id:'name',label:'Display name'},{id:'bio',label:'Bio'},{id:'location',label:'Location'},{id:'company',label:'Company'},
-  {id:'website',label:'Website'},{id:'socials',label:'Social accounts'},{id:'orcid',label:'ORCID'},
+  {id:'avatar',label:'Profile avatar'},{id:'name',label:'Display name'},{id:'username',label:'GitHub username'},{id:'bio',label:'Bio'},{id:'location',label:'Location'},{id:'company',label:'Company'},
+  {id:'website',label:'Website'},{id:'socials',label:'Social accounts'},{id:'twitter',label:'X / Twitter'},{id:'orcid',label:'ORCID'},
   {id:'followers',label:'Followers'},{id:'following',label:'Following'},{id:'repositories',label:'Public repositories'},
   {id:'stars',label:'Received stars'},{id:'languages',label:'Top languages'},{id:'contributions',label:'Total contributions'},
-  {id:'dailyContributions',label:'Daily contribution calendar'},{id:'pinnedRepos',label:'Pinned repositories'},
+  {id:'dailyContributions',label:'Daily contribution calendar'},{id:'streak',label:'Contribution streak'},{id:'pronouns',label:'Pronouns'},{id:'status',label:'GitHub status'},{id:'hireable',label:'Open to work status'},{id:'programs',label:'GitHub programs and badges'},{id:'pinnedRepos',label:'Pinned repositories'},{id:'topRepos',label:'Top repositories'},{id:'contributedRepos',label:'Repositories contributed to'},{id:'projects',label:'GitHub Projects'},
   {id:'commits',label:'Commit contributions'},{id:'pullRequests',label:'Pull request contributions'},{id:'issues',label:'Issue contributions'},
-  {id:'reviews',label:'Code review contributions'},{id:'gists',label:'Public gists'},{id:'organizations',label:'Organizations'},{id:'starredRepos',label:'Starred repositories'},{id:'email',label:'Public email'},{id:'joined',label:'GitHub join date'}
+  {id:'reviews',label:'Code review contributions'},{id:'discussions',label:'Discussions started'},{id:'comments',label:'Comments authored'},{id:'gists',label:'Public gists'},{id:'organizations',label:'Organizations'},{id:'starredRepos',label:'Starred repositories'},{id:'email',label:'Public email'},{id:'joined',label:'GitHub join date'}
 ];
 const CORNER_THEMES: {id: CornerTheme; label: string}[] = [
   {id:'none',label:'None'},{id:'fire',label:'Breathing fire'},{id:'titan',label:'Titan / freedom wings motif'},
   {id:'demon',label:'Demon blade motif'},{id:'cursed',label:'Cursed energy motif'},{id:'chakra',label:'Chakra spiral motif'},
-  {id:'pirate',label:'Pirate / compass motif'},{id:'spirit',label:'Spirit mask motif'},{id:'hunter',label:'Hunter rune motif'},{id:'dragon',label:'Dragon aura motif'}
+  {id:'pirate',label:'Pirate / compass motif'},{id:'spirit',label:'Spirit mask motif'},{id:'hunter',label:'Hunter rune motif'},{id:'dragon',label:'Dragon aura motif'},{id:'moon',label:'Moon halo motif'},{id:'vines',label:'Cave vines motif'},{id:'cave',label:'Cave crystal motif'}
 ];
 
 function makePreviewDays(total: number, seed: string) {
@@ -42,7 +42,7 @@ export default function App() {
   const [count, setCount] = useState(850);
   const [max, setMax] = useState(5000);
   const [curve, setCurve] = useState(1);
-  const [user, setUser] = useState('your-username');
+  const [user, setUser] = useState('bitzzdev');
   const [platform, setPlatform] = useState('github');
   const [mode, setMode] = useState<Mode>('both');
   const [totalStyle, setTotalStyle] = useState<TotalStyle>('number');
@@ -52,12 +52,12 @@ export default function App() {
   const [cellSize, setCellSize] = useState(10);
   const [cellGap, setCellGap] = useState(3);
   const [weekdays, setWeekdays] = useState(true);
-  const [profileFields, setProfileFields] = useState<ProfileField[]>(['name','bio','socials','orcid','location','website','followers','following','repositories','stars','languages','contributions','dailyContributions','pinnedRepos','commits','pullRequests','issues','reviews','gists','organizations','starredRepos','email','joined']);
+  const [profileFields, setProfileFields] = useState<ProfileField[]>(['avatar','name','username','bio','socials','twitter','orcid','location','website','followers','following','repositories','stars','languages','contributions','dailyContributions','streak','pronouns','status','hireable','programs','pinnedRepos','topRepos','contributedRepos','projects','commits','pullRequests','issues','reviews','discussions','comments','gists','organizations','starredRepos','email','joined']);
   const [cornerThemes, setCornerThemes] = useState<Record<'topLeft'|'topRight'|'bottomLeft'|'bottomRight', CornerTheme>>({topLeft:'fire',topRight:'titan',bottomLeft:'demon',bottomRight:'fire'});
   const [animePreset, setAnimePreset] = useState('original');
   const [showCornerLabels, setShowCornerLabels] = useState(false);
   const [orcidUrl, setOrcidUrl] = useState('');
-  const [socialLines, setSocialLines] = useState('Instagram|https://instagram.com/your-handle\nLinkedIn|https://linkedin.com/in/your-handle\nX|https://x.com/your-handle');
+  const [socialLines, setSocialLines] = useState('GitHub|https://github.com/bitzzdev\nGitLab|https://gitlab.com/bitzzdev\nInstagram|https://instagram.com/bitz.dev\nLinkedIn|https://linkedin.com/in/bitzzdev\nKo-fi|https://ko-fi.com/bitzzdev\nReddit|https://www.reddit.com/user/bitzzdev/\nYouTube|https://www.youtube.com/@bitzzzdev');
 
   const power = useMemo(() => Math.pow(Math.min(1, count / Math.max(1, max)), curve), [count, max, curve]);
   const piece = useMemo(() => createBreathingPiece({ styles, power, seed: `${platform}:${user.toLowerCase()}` }), [styles, power, platform, user]);
@@ -73,9 +73,9 @@ export default function App() {
   const toggleProfileField = (field: ProfileField) => setProfileFields((items) => items.includes(field) ? items.filter((item) => item !== field) : [...items, field]);
   const downloadConfig = () => {
     const socials = Object.fromEntries(socialLines.split('\n').map((line) => line.split('|')).filter((parts) => parts.length >= 2 && parts[0].trim() && parts[1].trim()).map((parts) => [parts[0].trim(),parts[1].trim()]));
-    const config = { username:user, platform, styles, maxContributions:max, powerCurve:curve, contributions:count, orcid:orcidUrl, socials,
+    const config = { username:user, platform, website:'https://bitz.is-a.dev/', styles, maxContributions:max, powerCurve:curve, contributions:count, orcid:orcidUrl, socials,
       readme:{show:profileFields,layout:'editorial',theme:'portfolio-paper',animePreset,showCornerLabels,
-        corners:cornerThemes,visualizations:{total:{enabled:true,style:totalStyle,palette:totalPalette},daily:{enabled:true,style:dailyStyle,palette:dailyPalette,cellSize,cellGap,weekdays}}} };
+        corners:cornerThemes,visualizations:{total:{enabled:mode !== 'daily',style:totalStyle,palette:totalPalette},daily:{enabled:mode !== 'total',style:dailyStyle,palette:dailyPalette,cellSize,cellGap,weekdays}}} };
     const url = URL.createObjectURL(new Blob([JSON.stringify(config,null,2)+'\n'],{type:'application/json'}));
     const anchor = document.createElement('a'); anchor.href=url; anchor.download='gitbreathing.json'; anchor.click(); URL.revokeObjectURL(url);
   };
@@ -178,7 +178,7 @@ export default function App() {
           <div className="profile-field-grid">{PROFILE_FIELDS.map((field) => <label className="profile-check" key={field.id}><input type="checkbox" checked={profileFields.includes(field.id)} onChange={() => toggleProfileField(field.id)}/><span>{field.label}</span></label>)}</div>
           <div className="section-heading corner-heading"><span className="eyebrow">ANIME CORNER ART</span><span className="step-index">07</span></div>
           <p className="section-description">Original series-inspired motifs, not copied character art, logos or screenshots. Place a different animation in each corner.</p>
-          <label>Visual preset<select value={animePreset} onChange={(e)=>{const v=e.target.value;setAnimePreset(v);const presets:Record<string,Record<'topLeft'|'topRight'|'bottomLeft'|'bottomRight',CornerTheme>>={original:{topLeft:'fire',topRight:'titan',bottomLeft:'demon',bottomRight:'fire'},aot:{topLeft:'titan',topRight:'titan',bottomLeft:'hunter',bottomRight:'fire'},'demon-slayer':{topLeft:'fire',topRight:'demon',bottomLeft:'spirit',bottomRight:'fire'},'jujutsu-kaisen':{topLeft:'cursed',topRight:'cursed',bottomLeft:'spirit',bottomRight:'fire'},naruto:{topLeft:'chakra',topRight:'chakra',bottomLeft:'hunter',bottomRight:'fire'},'one-piece':{topLeft:'pirate',topRight:'pirate',bottomLeft:'dragon',bottomRight:'fire'},bleach:{topLeft:'spirit',topRight:'demon',bottomLeft:'hunter',bottomRight:'fire'},'solo-leveling':{topLeft:'hunter',topRight:'cursed',bottomLeft:'dragon',bottomRight:'fire'},'dragon-ball':{topLeft:'dragon',topRight:'chakra',bottomLeft:'dragon',bottomRight:'fire'},'chainsaw-man':{topLeft:'demon',topRight:'hunter',bottomLeft:'cursed',bottomRight:'fire'}};setCornerThemes(presets[v]||presets.original)}}><option value="original">Original anime atmosphere</option><option value="aot">Titan / freedom</option><option value="demon-slayer">Breathing / sword forms</option><option value="jujutsu-kaisen">Cursed energy</option><option value="naruto">Chakra / seals</option><option value="one-piece">Pirate / compass</option><option value="bleach">Spirit / blade</option><option value="solo-leveling">Hunter / shadow</option><option value="dragon-ball">Dragon aura</option><option value="chainsaw-man">Saw / industrial</option></select></label>
+          <label>Visual preset<select value={animePreset} onChange={(e)=>{const v=e.target.value;setAnimePreset(v);const presets:Record<string,Record<'topLeft'|'topRight'|'bottomLeft'|'bottomRight',CornerTheme>>={original:{topLeft:'fire',topRight:'titan',bottomLeft:'demon',bottomRight:'fire'},aot:{topLeft:'titan',topRight:'titan',bottomLeft:'hunter',bottomRight:'fire'},'demon-slayer':{topLeft:'fire',topRight:'demon',bottomLeft:'spirit',bottomRight:'fire'},'jujutsu-kaisen':{topLeft:'cursed',topRight:'cursed',bottomLeft:'spirit',bottomRight:'fire'},naruto:{topLeft:'chakra',topRight:'chakra',bottomLeft:'hunter',bottomRight:'fire'},'one-piece':{topLeft:'pirate',topRight:'pirate',bottomLeft:'dragon',bottomRight:'fire'},bleach:{topLeft:'spirit',topRight:'demon',bottomLeft:'hunter',bottomRight:'fire'},'solo-leveling':{topLeft:'hunter',topRight:'cursed',bottomLeft:'dragon',bottomRight:'fire'},'dragon-ball':{topLeft:'dragon',topRight:'chakra',bottomLeft:'dragon',bottomRight:'fire'},'chainsaw-man':{topLeft:'demon',topRight:'hunter',bottomLeft:'cursed',bottomRight:'fire'},'hunter-x-hunter':{topLeft:'hunter',topRight:'spirit',bottomLeft:'chakra',bottomRight:'fire'},'my-hero-academia':{topLeft:'dragon',topRight:'hunter',bottomLeft:'chakra',bottomRight:'fire'},'tokyo-ghoul':{topLeft:'demon',topRight:'cursed',bottomLeft:'spirit',bottomRight:'fire'},jojo:{topLeft:'spirit',topRight:'dragon',bottomLeft:'cursed',bottomRight:'fire'},frieren:{topLeft:'spirit',topRight:'moon',bottomLeft:'vines',bottomRight:'fire'},evangelion:{topLeft:'cave',topRight:'cursed',bottomLeft:'dragon',bottomRight:'fire'},'spy-x-family':{topLeft:'hunter',topRight:'spirit',bottomLeft:'vines',bottomRight:'fire'},'fullmetal-alchemist':{topLeft:'chakra',topRight:'cave',bottomLeft:'demon',bottomRight:'fire'}};setCornerThemes(presets[v]||presets.original)}}><option value="original">Original anime atmosphere</option><option value="aot">Titan / freedom</option><option value="demon-slayer">Breathing / sword forms</option><option value="jujutsu-kaisen">Cursed energy</option><option value="naruto">Chakra / seals</option><option value="one-piece">Pirate / compass</option><option value="bleach">Spirit / blade</option><option value="solo-leveling">Hunter / shadow</option><option value="dragon-ball">Dragon aura</option><option value="chainsaw-man">Saw / industrial</option><option value="hunter-x-hunter">Hunter x Hunter</option><option value="my-hero-academia">My Hero Academia</option><option value="tokyo-ghoul">Tokyo Ghoul</option><option value="jojo">JoJo Bizarre Adventure</option><option value="frieren">Frieren</option><option value="evangelion">Evangelion</option><option value="spy-x-family">Spy x Family</option><option value="fullmetal-alchemist">Fullmetal Alchemist</option></select></label>
           <div className="corner-grid">{(['topLeft','topRight','bottomLeft','bottomRight'] as const).map((corner) => <label key={corner}>{corner.replace(/([A-Z])/g,' $1')}<select value={cornerThemes[corner]} onChange={(e)=>setCornerThemes((old)=>({...old,[corner]:e.target.value as CornerTheme}))}>{CORNER_THEMES.map((theme)=><option key={theme.id} value={theme.id}>{theme.label}</option>)}</select></label>)}</div>
           <label className="check-control"><input type="checkbox" checked={showCornerLabels} onChange={(e)=>setShowCornerLabels(e.target.checked)}/> Show corner motif labels</label>
           <button className="export-config" onClick={downloadConfig}>Export README configuration ↗</button>
