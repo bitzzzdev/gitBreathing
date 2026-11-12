@@ -79,7 +79,7 @@ const metrics=[
  {id:'followers',name:'FOLLOWERS',value:followers.toLocaleString()},
  {id:'following',name:'FOLLOWING',value:following.toLocaleString()},
  {id:'repositories',name:'PUBLIC REPOS',value:repoCount.toLocaleString()},
- {id:'stars',name:'RECEIVED STARS',value:stars.toLocaleString()},
+ {id:'stars',name:'REPO STARS / TOP 100',value:stars.toLocaleString()},
  {id:'starredRepos',name:'STARRED REPOS',value:starredRepos.toLocaleString()},
  {id:'contributions',name:'CONTRIBUTIONS',value:contributions.toLocaleString()},
  {id:'commits',name:'COMMITS',value:Number(cc.totalCommitContributions||0).toLocaleString()},

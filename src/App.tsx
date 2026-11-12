@@ -56,6 +56,8 @@ export default function App() {
   const [cornerThemes, setCornerThemes] = useState<Record<'topLeft'|'topRight'|'bottomLeft'|'bottomRight', CornerTheme>>({topLeft:'fire',topRight:'titan',bottomLeft:'demon',bottomRight:'fire'});
   const [animePreset, setAnimePreset] = useState('original');
   const [showCornerLabels, setShowCornerLabels] = useState(false);
+  const [orcidUrl, setOrcidUrl] = useState('');
+  const [socialLines, setSocialLines] = useState('Instagram|https://instagram.com/your-handle\\nLinkedIn|https://linkedin.com/in/your-handle\\nX|https://x.com/your-handle');
 
   const power = useMemo(() => Math.pow(Math.min(1, count / Math.max(1, max)), curve), [count, max, curve]);
   const piece = useMemo(() => createBreathingPiece({ styles, power, seed: `${platform}:${user.toLowerCase()}` }), [styles, power, platform, user]);
@@ -70,7 +72,8 @@ export default function App() {
   const paletteClass = (palette: Palette) => `palette-${palette}`;
   const toggleProfileField = (field: ProfileField) => setProfileFields((items) => items.includes(field) ? items.filter((item) => item !== field) : [...items, field]);
   const downloadConfig = () => {
-    const config = { username:user, platform, styles, maxContributions:max, powerCurve:curve, contributions:count,
+    const socials = Object.fromEntries(socialLines.split('\\n').map((line) => line.split('|')).filter((parts) => parts.length >= 2 && parts[0].trim() && parts[1].trim()).map((parts) => [parts[0].trim(),parts[1].trim()]));
+    const config = { username:user, platform, styles, maxContributions:max, powerCurve:curve, contributions:count, orcid:orcidUrl, socials,
       readme:{show:profileFields,layout:'editorial',theme:'portfolio-paper',animePreset,showCornerLabels,
         corners:cornerThemes,visualizations:{total:{enabled:true,style:totalStyle,palette:totalPalette},daily:{enabled:true,style:dailyStyle,palette:dailyPalette,cellSize,cellGap,weekdays}}} };
     const url = URL.createObjectURL(new Blob([JSON.stringify(config,null,2)+'\n'],{type:'application/json'}));
@@ -170,6 +173,8 @@ export default function App() {
           <div className="section-heading"><span className="eyebrow">README COMPOSITION</span><span className="step-index">06</span></div>
           <h2>Build your profile card</h2>
           <p className="section-description">Choose which public GitHub profile fields and contribution data appear in the generated README artwork. Missing fields are omitted automatically.</p>
+          <label htmlFor="orcid-url">ORCID URL <input id="orcid-url" value={orcidUrl} onChange={(e)=>setOrcidUrl(e.target.value)} placeholder="https://orcid.org/0000-0000-0000-0000" /></label>
+          <label htmlFor="social-lines">Additional social links <small>One per line: Label|https://profile-url</small><textarea id="social-lines" rows={3} value={socialLines} onChange={(e)=>setSocialLines(e.target.value)} /></label>
           <div className="profile-field-grid">{PROFILE_FIELDS.map((field) => <label className="profile-check" key={field.id}><input type="checkbox" checked={profileFields.includes(field.id)} onChange={() => toggleProfileField(field.id)}/><span>{field.label}</span></label>)}</div>
           <div className="section-heading corner-heading"><span className="eyebrow">ANIME CORNER ART</span><span className="step-index">07</span></div>
           <p className="section-description">Original series-inspired motifs, not copied character art, logos or screenshots. Place a different animation in each corner.</p>
