@@ -108,9 +108,9 @@
     ],
     "layout": "editorial",
     "theme": "portfolio-paper",
-    "background": "#0b0d0b",
-    "foreground": "#e8e9e4",
-    "accent": "#b7c2b3",
+    "background": "#040406",
+    "foreground": "#ffffff",
+    "accent": "#ffffff",
     "animePreset": "demon-slayer",
     "corners": {
       "topLeft": "fire",

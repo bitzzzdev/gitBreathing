@@ -50,9 +50,9 @@ const topLanguages=[...langs.entries()].sort((a,b)=>b[1].count-a[1].count).slice
 const esc=(v:unknown)=>String(v??'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&apos;');
 const safeUrl=(v:unknown)=>{try{const u=new URL(String(v??''));return u.protocol==='https:'||u.protocol==='http:'?esc(u.toString()):'';}catch{return '';}};
 const tx=(x:number,y:number,v:unknown,size=14,fill='#ffffff',weight=400,mono=false)=>'<text x="'+x+'" y="'+y+'" fill="'+fill+'" font-family="Paper Mono,ui-monospace,monospace" font-size="'+size+'" font-weight="'+weight+'">'+esc(v)+'</text>';
-const ln=(y:number)=>'<path d="M54 '+y+'H1146" stroke="#343934" stroke-width="1"/>';
-const label=(x:number,y:number,v:string)=>tx(x,y,v.toUpperCase(),10,'#9da49b',500,true);
-const pill=(x:number,y:number,v:string)=>{const w=Math.min(220,Math.max(62,v.length*7+22));return '<rect x="'+x+'" y="'+(y-16)+'" width="'+w+'" height="26" rx="2" fill="#171b17" stroke="#3a4039"/>'+tx(x+11,y+1,v,10,'#cbd1c8',500,true);};
+const ln=(y:number)=>'<path d="M54 '+y+'H1146" stroke="#303038" stroke-width="1"/>';
+const label=(x:number,y:number,v:string)=>tx(x,y,v.toUpperCase(),10,'#a1a1aa',500,true);
+const pill=(x:number,y:number,v:string)=>{const w=Math.min(220,Math.max(62,v.length*7+22));return '<rect x="'+x+'" y="'+(y-16)+'" width="'+w+'" height="26" rx="2" fill="#101014" stroke="#303038"/>'+tx(x+11,y+1,v,10,'#cbd1c8',500,true);};
 const motif=(kind:Corner,x:number,y:number,fx=false,fy=false)=>{
  if(kind==='none')return '';
  const g='<g transform="translate('+x+' '+y+') scale('+(fx?-1:1)+' '+(fy?-1:1)+')" opacity=".72" fill="none" stroke-linecap="round" stroke-linejoin="round">';
@@ -86,7 +86,7 @@ const company=user.company||'';
 if(show.has('avatar')&&user.avatarUrl){outParts.push('<defs><clipPath id="profileAvatarClip"><circle cx="1102" cy="116" r="38"/></clipPath></defs><image href="'+safeUrl(user.avatarUrl)+'" x="1064" y="78" width="76" height="76" preserveAspectRatio="xMidYMid slice" clip-path="url(#profileAvatarClip)"/>');}
 if(show.has('name'))outParts.push(tx(56,104,profileName,35,fg,600));
 if(show.has('username')&&login)outParts.push(tx(58,130,'@'+login,12,'#a1a1aa',400,true));
-if(show.has('bio')&&bio)outParts.push(tx(58,160,bio.slice(0,145),12,'#b4bbb2'));
+if(show.has('bio')&&bio)outParts.push(tx(58,160,bio.slice(0,145),12,'#c4c4cc'));
 let px=58;
 if(show.has('location')&&location){outParts.push(pill(px,194,'⌖ '+location));px+=Math.min(230,location.length*7+45);}
 if(show.has('company')&&company){outParts.push(pill(px,194,company));px+=Math.min(220,company.length*7+32);}
