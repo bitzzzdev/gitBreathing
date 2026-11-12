@@ -7,6 +7,20 @@ type Mode = 'both' | 'total' | 'daily';
 type TotalStyle = 'number' | 'bar' | 'ring';
 type DailyStyle = 'heatmap' | 'bars';
 type Palette = 'mono' | 'ember' | 'ocean';
+type ProfileField = 'name' | 'bio' | 'location' | 'company' | 'website' | 'socials' | 'orcid' | 'followers' | 'following' | 'repositories' | 'stars' | 'languages' | 'contributions' | 'dailyContributions' | 'pinnedRepos';
+type CornerTheme = 'none' | 'fire' | 'titan' | 'demon' | 'cursed' | 'chakra' | 'pirate' | 'spirit' | 'hunter' | 'dragon';
+const PROFILE_FIELDS: {id: ProfileField; label: string}[] = [
+  {id:'name',label:'Display name'},{id:'bio',label:'Bio'},{id:'location',label:'Location'},{id:'company',label:'Company'},
+  {id:'website',label:'Website'},{id:'socials',label:'Social accounts'},{id:'orcid',label:'ORCID'},
+  {id:'followers',label:'Followers'},{id:'following',label:'Following'},{id:'repositories',label:'Public repositories'},
+  {id:'stars',label:'Received stars'},{id:'languages',label:'Top languages'},{id:'contributions',label:'Total contributions'},
+  {id:'dailyContributions',label:'Daily contribution calendar'},{id:'pinnedRepos',label:'Pinned repositories'}
+];
+const CORNER_THEMES: {id: CornerTheme; label: string}[] = [
+  {id:'none',label:'None'},{id:'fire',label:'Breathing fire'},{id:'titan',label:'Titan / freedom wings motif'},
+  {id:'demon',label:'Demon blade motif'},{id:'cursed',label:'Cursed energy motif'},{id:'chakra',label:'Chakra spiral motif'},
+  {id:'pirate',label:'Pirate / compass motif'},{id:'spirit',label:'Spirit mask motif'},{id:'hunter',label:'Hunter rune motif'},{id:'dragon',label:'Dragon aura motif'}
+];
 
 function makePreviewDays(total: number, seed: string) {
   let hash = 2166136261;
@@ -36,6 +50,10 @@ export default function App() {
   const [cellSize, setCellSize] = useState(10);
   const [cellGap, setCellGap] = useState(3);
   const [weekdays, setWeekdays] = useState(true);
+  const [profileFields, setProfileFields] = useState<ProfileField[]>(['name','bio','socials','orcid','location','website','followers','following','repositories','stars','languages','contributions','dailyContributions','pinnedRepos']);
+  const [cornerThemes, setCornerThemes] = useState<Record<'topLeft'|'topRight'|'bottomLeft'|'bottomRight', CornerTheme>>({topLeft:'fire',topRight:'titan',bottomLeft:'demon',bottomRight:'fire'});
+  const [animePreset, setAnimePreset] = useState('original');
+  const [showCornerLabels, setShowCornerLabels] = useState(false);
 
   const power = useMemo(() => Math.pow(Math.min(1, count / Math.max(1, max)), curve), [count, max, curve]);
   const piece = useMemo(() => createBreathingPiece({ styles, power, seed: `${platform}:${user.toLowerCase()}` }), [styles, power, platform, user]);
@@ -48,6 +66,14 @@ export default function App() {
     [next[from], next[to]] = [next[to], next[from]]; return next;
   });
   const paletteClass = (palette: Palette) => `palette-${palette}`;
+  const toggleProfileField = (field: ProfileField) => setProfileFields((items) => items.includes(field) ? items.filter((item) => item !== field) : [...items, field]);
+  const downloadConfig = () => {
+    const config = { username:user, platform, styles, maxContributions:max, powerCurve:curve, contributions:count,
+      readme:{show:profileFields,layout:'editorial',theme:'portfolio-paper',animePreset,showCornerLabels,
+        corners:cornerThemes,visualizations:{total:{enabled:true,style:totalStyle,palette:totalPalette},daily:{enabled:true,style:dailyStyle,palette:dailyPalette,cellSize,cellGap,weekdays}}} };
+    const url = URL.createObjectURL(new Blob([JSON.stringify(config,null,2)+'\\n'],{type:'application/json'}));
+    const anchor = document.createElement('a'); anchor.href=url; anchor.download='gitbreathing.json'; anchor.click(); URL.revokeObjectURL(url);
+  };
 
   return <main className="site-shell">
     <header className="topbar">
@@ -136,6 +162,19 @@ export default function App() {
             </div>
           </article>}
           <p className="preview-disclaimer">Illustrative daily distribution generated locally from the total. It is not fetched GitHub history. The profile renderer must use the actual contribution calendar data.</p>
+        </section>
+
+        <section className="section-block profile-builder">
+          <div className="section-heading"><span className="eyebrow">README COMPOSITION</span><span className="step-index">06</span></div>
+          <h2>Build your profile card</h2>
+          <p className="section-description">Choose which public GitHub profile fields and contribution data appear in the generated README artwork. Missing fields are omitted automatically.</p>
+          <div className="profile-field-grid">{PROFILE_FIELDS.map((field) => <label className="profile-check" key={field.id}><input type="checkbox" checked={profileFields.includes(field.id)} onChange={() => toggleProfileField(field.id)}/><span>{field.label}</span></label>)}</div>
+          <div className="section-heading corner-heading"><span className="eyebrow">ANIME CORNER ART</span><span className="step-index">07</span></div>
+          <p className="section-description">Original series-inspired motifs, not copied character art, logos or screenshots. Place a different animation in each corner.</p>
+          <label>Visual preset<select value={animePreset} onChange={(e)=>setAnimePreset(e.target.value)}><option value="original">Original anime atmosphere</option><option value="aot">Titan / freedom</option><option value="demon-slayer">Breathing / sword forms</option><option value="jujutsu-kaisen">Cursed energy</option><option value="naruto">Chakra / seals</option><option value="one-piece">Pirate / compass</option><option value="bleach">Spirit / blade</option><option value="solo-leveling">Hunter / shadow</option><option value="dragon-ball">Dragon aura</option><option value="chainsaw-man">Saw / industrial</option></select></label>
+          <div className="corner-grid">{(['topLeft','topRight','bottomLeft','bottomRight'] as const).map((corner) => <label key={corner}>{corner.replace(/([A-Z])/g,' $1')}<select value={cornerThemes[corner]} onChange={(e)=>setCornerThemes((old)=>({...old,[corner]:e.target.value as CornerTheme}))}>{CORNER_THEMES.map((theme)=><option key={theme.id} value={theme.id}>{theme.label}</option>)}</select></label>)}</div>
+          <label className="check-control"><input type="checkbox" checked={showCornerLabels} onChange={(e)=>setShowCornerLabels(e.target.checked)}/> Show corner motif labels</label>
+          <button className="export-config" onClick={downloadConfig}>Export README configuration ↗</button>
         </section>
         <section className="section-block lineage-section">
           <div className="section-heading"><span className="eyebrow">STYLE SYSTEM</span><span className="step-index">05</span></div>
