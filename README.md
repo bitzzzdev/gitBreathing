@@ -7,7 +7,7 @@ A configurable GitHub profile composition engine. It turns public GitHub profile
 After GitHub Actions runs, embed the complete generated profile with one ordinary Markdown image:
 
 ```md
-![GitBreathing profile](https://raw.githubusercontent.com/bitzzdev/gitBreathing/main/dist/profile.svg)
+![GitBreathing profile](https://gitlab.com/bitzzdev/gitbreathing/-/raw/main/dist/profile.svg)
 ```
 
 No JavaScript, iframe, external widget or custom HTML script is required in the README. GitHub displays the generated SVG as an image. For platforms that block SVG, use the individual PNG/GIF assets.

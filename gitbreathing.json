@@ -60,5 +60,69 @@
     "motion": true,
     "particleDensity": 1,
     "strokeScale": 1
+  },
+  "website": "https://bitz.is-a.dev/",
+  "orcid": "https://orcid.org/0009-0004-2013-2999",
+  "socials": {
+    "Instagram": "https://instagram.com/bitz.dev",
+    "LinkedIn": "https://linkedin.com/in/bitzzdev",
+    "X": "https://x.com/bitzzdev",
+    "Website": "https://bitz.is-a.dev/"
+  },
+  "readme": {
+    "show": [
+      "name",
+      "bio",
+      "location",
+      "company",
+      "website",
+      "socials",
+      "orcid",
+      "followers",
+      "following",
+      "repositories",
+      "stars",
+      "languages",
+      "contributions",
+      "dailyContributions",
+      "pinnedRepos",
+      "commits",
+      "pullRequests",
+      "issues",
+      "reviews",
+      "gists",
+      "organizations",
+      "starredRepos",
+      "email",
+      "joined"
+    ],
+    "layout": "editorial",
+    "theme": "portfolio-paper",
+    "background": "#0b0d0b",
+    "foreground": "#e8e9e4",
+    "accent": "#b7c2b3",
+    "animePreset": "demon-slayer",
+    "corners": {
+      "topLeft": "fire",
+      "topRight": "titan",
+      "bottomLeft": "demon",
+      "bottomRight": "fire"
+    },
+    "showCornerLabels": false,
+    "visualizations": {
+      "total": {
+        "enabled": true,
+        "style": "number",
+        "palette": "mono"
+      },
+      "daily": {
+        "enabled": true,
+        "style": "heatmap",
+        "palette": "mono",
+        "cellSize": 10,
+        "cellGap": 3,
+        "weekdays": true
+      }
+    }
   }
 }
