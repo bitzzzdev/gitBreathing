@@ -3,23 +3,11 @@
   "platform": "github",
   "styles": [
     "sun",
-    "moon",
     "water",
-    "flame",
-    "thunder",
-    "wind",
-    "stone",
-    "insect",
-    "serpent",
-    "flower",
-    "love",
-    "sound",
-    "beast",
     "mist"
   ],
   "styleWeights": {
     "sun": 1,
-    "moon": 0.8,
     "water": 1,
     "mist": 0.7
   },
@@ -28,11 +16,6 @@
       "#f97316",
       "#facc15",
       "#fff1a8"
-    ],
-    "moon": [
-      "#7c3aed",
-      "#c4b5fd",
-      "#f5f3ff"
     ],
     "water": [
       "#0284c7",
@@ -50,6 +33,7 @@
   "frames": 24,
   "fps": 12,
   "powerCurve": 1,
+  "contributions": 850,
   "background": "transparent",
   "seed": "",
   "outputDir": "dist",
@@ -62,27 +46,21 @@
     "strokeScale": 1
   },
   "website": "https://bitz.is-a.dev/",
+  "orcid": "https://orcid.org/0009-0004-2013-2999",
   "socials": {
-    "GitHub": "https://github.com/bitzzdev",
-    "GitLab": "https://gitlab.com/bitzzdev",
     "Instagram": "https://instagram.com/bitz.dev",
     "LinkedIn": "https://linkedin.com/in/bitzzdev",
-    "Ko-fi": "https://ko-fi.com/bitzzdev",
-    "Reddit": "https://www.reddit.com/user/bitzzdev/",
-    "YouTube": "https://www.youtube.com/@bitzzzdev"
+    "X": "https://x.com/bitzzdev"
   },
   "readme": {
     "show": [
-      "avatar",
       "name",
-      "username",
       "bio",
-      "location",
-      "company",
-      "website",
       "socials",
       "twitter",
       "orcid",
+      "location",
+      "website",
       "followers",
       "following",
       "repositories",
@@ -90,21 +68,11 @@
       "languages",
       "contributions",
       "dailyContributions",
-      "streak",
-      "pronouns",
-      "status",
-      "hireable",
-      "programs",
       "pinnedRepos",
-      "topRepos",
-      "contributedRepos",
-      "projects",
       "commits",
       "pullRequests",
       "issues",
       "reviews",
-      "discussions",
-      "comments",
       "gists",
       "organizations",
       "starredRepos",
@@ -117,13 +85,13 @@
     "foreground": "#ffffff",
     "accent": "#ffffff",
     "animePreset": "demon-slayer",
+    "showCornerLabels": true,
     "corners": {
       "topLeft": "fire",
-      "topRight": "titan",
-      "bottomLeft": "vines",
+      "topRight": "demon",
+      "bottomLeft": "spirit",
       "bottomRight": "fire"
     },
-    "showCornerLabels": false,
     "visualizations": {
       "total": {
         "enabled": true,

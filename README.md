@@ -2,12 +2,24 @@
 
 A configurable GitHub profile composition engine. It turns public GitHub profile data, contribution history, repository metrics and original animated ASCII motifs into one embeddable SVG, plus standalone breathing art.
 
+## Live profile preview
+
+The profile preview is generated from [`gitbreathing.json`](gitbreathing.json) and refreshed by the GitHub Actions workflow on the `dev` branch.
+
+![GitBreathing profile preview](dist/profile.svg)
+
+The standalone breathing artwork is generated alongside the profile:
+
+![GitBreathing animated artwork](dist/slash.gif)
+
+To see the generated preview before the first workflow run, sync `dev` to GitHub and run **Actions → Update GitBreathing**. The workflow commits the generated files under `dist/`.
+
 ## Profile README output
 
-After GitHub Actions runs, embed the complete generated profile with one ordinary Markdown image:
+Embed the complete generated profile in your own GitHub profile README with one ordinary Markdown image:
 
 ```md
-![GitBreathing profile](https://gitlab.com/bitzzdev/gitbreathing/-/raw/main/dist/profile.svg)
+![GitBreathing profile](https://gitlab.com/bitzzdev/gitbreathing/-/raw/dev/dist/profile.svg)
 ```
 
 No JavaScript, iframe, external widget or custom HTML script is required in the README. GitHub displays the generated SVG as an image. For platforms that block SVG, use the individual PNG/GIF assets.
@@ -76,17 +88,7 @@ Enable **Settings → Actions → General → Workflow permissions → Read and 
 
 ## Configuration
 
-The `readme.show` array controls visibility. The `readme.corners` object controls each corner independently. Manual social links and ORCID are supported separately:
-
-```json
-{
-  "socials": {
-    "Instagram": "https://instagram.com/your-handle",
-    "LinkedIn": "https://linkedin.com/in/your-handle"
-  },
-  "orcid": "https://orcid.org/0000-0000-0000-0000"
-}
-```
+The repository's current preview configuration is stored in `gitbreathing.json`. It uses the `bitzzdev` profile, Demon Slayer-inspired corner art, independent total and daily contribution panels, and manually supplied Instagram, LinkedIn, X and ORCID links. The `readme.show` array controls visibility; `readme.corners` controls each corner independently.
 
 ## Privacy and cost
 
