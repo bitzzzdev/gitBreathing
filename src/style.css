@@ -20,3 +20,48 @@ footer{display:flex;justify-content:space-between;gap:15px;flex-wrap:wrap;paddin
 html{scrollbar-width:thin;scrollbar-color:#777d73 #0a0b0a}::-webkit-scrollbar{width:10px;height:10px}::-webkit-scrollbar-track{background:#0a0b0a;border-left:1px solid #292b29}::-webkit-scrollbar-thumb{background:#4a5049;border:2px solid #0a0b0a;border-radius:0}::-webkit-scrollbar-thumb:hover{background:#858d82}::selection{background:#d9e0d5;color:#101210}.profile-field-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px 12px;margin:16px 0 23px}.profile-check{display:flex;align-items:center;gap:8px;margin:0;padding:8px 9px;border:1px solid var(--line);background:#0d0e0e;font-size:10px;color:#c8ccc6}.profile-check input,.check-control input{accent-color:#d7ded3}.corner-heading{margin-top:28px;padding-top:19px;border-top:1px solid var(--line)}.corner-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:0 12px}.corner-grid label{text-transform:capitalize}.export-config{margin-top:20px;padding:11px 14px;border:1px solid #747c72;background:#d9dfd5;color:#101210;font:10px var(--mono);cursor:pointer}.export-config:hover{background:#fff}.profile-builder select{min-width:0}@media(max-width:520px){.profile-field-grid,.corner-grid{grid-template-columns:1fr}}
 
 .profile-builder textarea{width:100%;min-height:78px;resize:vertical;padding:9px 11px;border:1px solid var(--line-strong);border-radius:2px;background:#0b0c0c;color:var(--text);font:10px var(--mono);line-height:1.7}.profile-builder label small{display:block;margin-top:4px;color:var(--muted);font:9px var(--mono)}
+
+
+/* Portfolio identity: Paper Mono, structural rails and hairline dividers. */
+@font-face{font-family:"Paper Mono";src:url("https://bitz.is-a.dev/fonts/PaperMono-Regular.woff2") format("woff2");font-style:normal;font-weight:400;font-display:swap}
+@font-face{font-family:"Paper Mono";src:url("https://bitz.is-a.dev/fonts/PaperMono-Medium.woff2") format("woff2");font-style:normal;font-weight:500;font-display:swap}
+@font-face{font-family:"Paper Mono";src:url("https://bitz.is-a.dev/fonts/PaperMono-SemiBold.woff2") format("woff2");font-style:normal;font-weight:600;font-display:swap}
+@font-face{font-family:"Paper Mono";src:url("https://bitz.is-a.dev/fonts/PaperMono-Bold.woff2") format("woff2");font-style:normal;font-weight:700;font-display:swap}
+:root{font-family:"Paper Mono",ui-monospace,"SF Mono",Menlo,Consolas,monospace;color:#fff;background:#040406;--bg:#040406;--line:rgba(221,221,221,.10);--line-strong:rgba(255,255,255,.18);--text:#fff;--muted:rgba(255,255,255,.5);--mono:"Paper Mono",ui-monospace,monospace}
+html,body,button,input,select,textarea{font-family:"Paper Mono",ui-monospace,"SF Mono",Menlo,Consolas,monospace;font-feature-settings:"calt" 1,"liga" 1,"zero" 1}
+body{background:#040406;color:#fff}
+.site-shell{width:min(1728px,100%);padding-inline:clamp(12px,7.45vw,129px);position:relative}
+.site-shell:before,.site-shell:after{content:"";position:absolute;top:0;bottom:0;width:1px;background:rgba(221,221,221,.08);pointer-events:none;z-index:0}
+.site-shell:before{left:clamp(12px,7.45vw,129px)}
+.site-shell:after{right:clamp(12px,7.45vw,129px)}
+.topbar,.workspace,.section-block,.preview-section,.hero-meta{border-color:rgba(221,221,221,.10)}
+.topbar,.section-block,.preview-section,.workspace,.hero,.config-column,.preview-column,footer{position:relative;z-index:1}
+.brand,.topbar nav,.eyebrow,.step-index,.hero-meta,.field-note,.style-copy small,.style-state,.layer-controls,.metric-strip span,.live-indicator,.data-tag,.daily-summary,.preview-disclaimer,footer{font-family:var(--mono)}
+.hero h1,h2,h3,.style-copy b,.metric-strip b,.total-number strong{font-family:var(--mono);font-weight:500;letter-spacing:-.045em}
+.hero h1{letter-spacing:-.06em;font-weight:600}
+.hero h1 span{color:rgba(255,255,255,.45)}
+.hero-copy,.section-description,.field-note{color:rgba(255,255,255,.62)}
+input:not([type=range]):not([type=checkbox]),select,.profile-builder textarea{background:#08080b;color:#fff;border:1px solid rgba(255,255,255,.16);border-radius:0}
+input:focus,select:focus,button:focus-visible,a:focus-visible{outline:1px solid #fff;outline-offset:3px}
+.style-row,.visual-card,.art-stage,.segmented,.profile-check,.data-tag,.layer-controls button{background:#08080b;border-color:rgba(255,255,255,.12);border-radius:0}
+.style-row.is-selected{background:#101014;border-color:rgba(255,255,255,.42)}
+.style-select,.layer-controls button,.segmented button{border-radius:0}
+.art-stage{background:#020203;border-color:rgba(255,255,255,.16)}
+.total-visual,.daily-visual{background:#09090d}
+.total-visual.palette-mono,.daily-visual.palette-mono{--tone-1:#fff;--tone-2:#bdbdc4;--tone-3:#777780;--tone-4:#393941}
+.total-visual.palette-ember,.daily-visual.palette-ember{--tone-1:#e5c2a7;--tone-2:#b58b72;--tone-3:#765849;--tone-4:#40312c}
+.total-visual.palette-ocean,.daily-visual.palette-ocean{--tone-1:#c6dce2;--tone-2:#8baeb7;--tone-3:#557c86;--tone-4:#304a52}
+.total-track,.ring:before{background:#15151a}
+.export-config{background:#fff;color:#040406;border:1px solid #fff;border-radius:0;font-family:var(--mono);font-weight:500}
+.export-config:hover{background:#d8d8dc}
+button,select{border-radius:0}
+a{transition:opacity .15s ease}
+a:hover{opacity:.72}
+html{scrollbar-width:thin;scrollbar-color:#666 #040406;scrollbar-gutter:stable}
+::-webkit-scrollbar{width:9px;height:9px}
+::-webkit-scrollbar-track{background:#040406;border-left:1px solid rgba(255,255,255,.08)}
+::-webkit-scrollbar-thumb{background:#55555d;border:2px solid #040406;border-radius:0}
+::-webkit-scrollbar-thumb:hover{background:#aaa}
+::selection{background:#fff;color:#040406}
+@media(max-width:720px){.site-shell{padding-inline:16px}.site-shell:before{left:16px}.site-shell:after{right:16px}}
+@media(max-width:520px){.site-shell{padding-inline:12px}.site-shell:before{left:12px}.site-shell:after{right:12px}}
