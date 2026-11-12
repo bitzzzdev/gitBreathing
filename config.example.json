@@ -33,78 +33,6 @@
     "beast": 1,
     "mist": 1
   },
-  "styleColors": {
-    "sun": [
-      "#53535d",
-      "#a0a0aa",
-      "#f4f4f5"
-    ],
-    "moon": [
-      "#9b8cff",
-      "#c9baff",
-      "#f4efff"
-    ],
-    "water": [
-      "#167bd5",
-      "#42c7ed",
-      "#c4f5ff"
-    ],
-    "flame": [
-      "#e43b24",
-      "#ff7a22",
-      "#ffd166"
-    ],
-    "thunder": [
-      "#d5a900",
-      "#ffe34d",
-      "#fff7bd"
-    ],
-    "wind": [
-      "#278b59",
-      "#83d66b",
-      "#e3ffd0"
-    ],
-    "stone": [
-      "#777b83",
-      "#b5bbc4",
-      "#f0e9dd"
-    ],
-    "insect": [
-      "#7776d9",
-      "#b8a5ff",
-      "#f3dcff"
-    ],
-    "serpent": [
-      "#8771b9",
-      "#c5a8eb",
-      "#f1e5ff"
-    ],
-    "flower": [
-      "#e879aa",
-      "#ffb6cf",
-      "#fff0f5"
-    ],
-    "love": [
-      "#d83d83",
-      "#ff8fbd",
-      "#ffe0ed"
-    ],
-    "sound": [
-      "#bd762b",
-      "#f2b94b",
-      "#fff0b4"
-    ],
-    "beast": [
-      "#56627e",
-      "#929db5",
-      "#e2e8f0"
-    ],
-    "mist": [
-      "#9ca3af",
-      "#d9e2ea",
-      "#ffffff"
-    ]
-  },
   "maxContributions": 5000,
   "resolution": 128,
   "frames": 24,
@@ -113,6 +41,40 @@
   "background": "transparent",
   "seed": "",
   "outputDir": "dist",
+  "socials": {},
+  "orcid": "",
+  "readme": {
+    "show": [
+      "name",
+      "bio",
+      "location",
+      "company",
+      "website",
+      "socials",
+      "orcid",
+      "followers",
+      "following",
+      "repositories",
+      "stars",
+      "languages",
+      "contributions",
+      "dailyContributions",
+      "pinnedRepos"
+    ],
+    "layout": "editorial",
+    "theme": "portfolio-paper",
+    "background": "#0b0d0b",
+    "foreground": "#e8e9e4",
+    "accent": "#b7c2b3",
+    "animePreset": "original",
+    "corners": {
+      "topLeft": "fire",
+      "topRight": "titan",
+      "bottomLeft": "demon",
+      "bottomRight": "fire"
+    },
+    "showCornerLabels": false
+  },
   "effects": {
     "glow": true,
     "particles": true,

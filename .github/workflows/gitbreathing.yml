@@ -19,24 +19,29 @@ jobs:
         with:
           node-version: 22
       - run: npm install --no-audit --no-fund
-      - name: Fetch GitHub contribution total
+      - name: Fetch GitHub profile and contribution data
         env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_TOKEN: \${{ secrets.GITHUB_TOKEN }}
         shell: bash
         run: |
+          set -euo pipefail
           USERNAME=$(node -p "JSON.parse(require('fs').readFileSync('gitbreathing.json','utf8')).username")
-          QUERY='query($login:String!){user(login:$login){contributionsCollection{contributionCalendar{totalContributions}}}}'
+          QUERY='query($login:String!){user(login:$login){login name bio location company websiteUrl avatarUrl twitterUsername followers{totalCount} following{totalCount} repositories(first:100,privacy:PUBLIC,ownerAffiliations:OWNER,orderBy:{field:STARGAZERS,direction:DESC}){totalCount nodes{name url description stargazerCount forkCount primaryLanguage{name color}}} starredRepositories{totalCount} socialAccounts(first:20){nodes{provider url}} pinnedItems(first:6,types:[REPOSITORY]){nodes{... on Repository{name url description stargazerCount forkCount primaryLanguage{name color}}}} contributionsCollection{totalCommitContributions totalIssueContributions totalPullRequestContributions totalPullRequestReviewContributions contributionCalendar{totalContributions weeks{contributionDays{date contributionCount color}}}}}}'
           BODY=$(jq -n --arg q "$QUERY" --arg u "$USERNAME" '{query:$q,variables:{login:$u}}')
           RESPONSE=$(curl --fail-with-body -fsS -H "Authorization: bearer $GH_TOKEN" -H 'Content-Type: application/json' -d "$BODY" https://api.github.com/graphql)
+          printf '%s' "$RESPONSE" | jq -e '.data.user' >/dev/null
+          mkdir -p dist
+          printf '%s' "$RESPONSE" | jq '{data:.data}' > dist/profile-data.json
           TOTAL=$(printf '%s' "$RESPONSE" | jq -er '.data.user.contributionsCollection.contributionCalendar.totalContributions')
           echo "CONTRIBUTIONS=$TOTAL" >> "$GITHUB_ENV"
       - run: npm run render
+      - run: npm run render:profile
       - name: Commit generated assets
         shell: bash
         run: |
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          git add dist/slash.svg dist/slash.gif dist/slash.png dist/metadata.json
+          git add dist/slash.svg dist/slash.gif dist/slash.png dist/metadata.json dist/profile.svg dist/profile-data.json
           if git diff --cached --quiet; then echo 'No artwork changes.'; exit 0; fi
-          git commit -m 'chore: update GitBreathing artwork'
+          git commit -m 'chore: update GitBreathing profile assets'
           git push

@@ -1,45 +1,43 @@
 # GitBreathing
 
-Contribution-powered, deterministic **animated ASCII breathing art** for GitHub and GitLab profile READMEs. Your activity controls the slash's intensity, density, secondary cuts and particle field. The renderer produces an animated ASCII SVG, GIF, PNG preview, plain-text frame and metadata.
+A configurable GitHub profile composition engine. It turns public GitHub profile data, contribution history, repository metrics and original animated ASCII motifs into one embeddable SVG, plus standalone breathing art.
 
-- Fourteen breathing styles with individual motion motifs and colour palettes.
-- Combine and reorder styles to build layered techniques.
-- ASCII-first rendering at 64 × 30 character cells, with animated SVG and GIF output.
-- Contribution power changes the density and complexity of the art.
-- Deterministic output for the same user, seed, style order, contribution count and renderer version.
-- No characters, character sprites, ranks, hosted backend, telemetry or central token storage.
-- Runs locally or in the user's own GitHub Actions / GitLab CI environment.
+## Profile README output
 
-## Preview
+After GitHub Actions runs, embed the complete generated profile with one ordinary Markdown image:
 
-<p align="center">
-  <img src="https://gitlab.com/bitzzdev/gitbreathing/-/raw/main/dist/slash.svg" width="480" alt="Animated GitBreathing ASCII artwork">
-</p>
+```md
+![GitBreathing profile](https://raw.githubusercontent.com/bitzzdev/gitBreathing/main/dist/profile.svg)
+```
 
-The demo config targets GitHub user `bitzzdev`. The image appears after a successful render has committed `dist/slash.svg` to this repository.
+No JavaScript, iframe, external widget or custom HTML script is required in the README. GitHub displays the generated SVG as an image. For platforms that block SVG, use the individual PNG/GIF assets.
 
-The generated SVG is animated and works in GitHub READMEs without JavaScript. The GIF is provided for clients that do not animate SVG.
+## What can be displayed
 
-## Breathing styles
+Configure `readme.show` in `gitbreathing.json` to select any combination of:
 
-| Style | Visual language | Known forms | Reference colour | Branch |
-| --- | --- | ---: | --- | --- |
-| Sun | Solar arcs, radiating spokes and central slash | 13 | Black | Origin |
-| Moon | Layered crescents and curved cuts | 16 | Light purple | Sun |
-| Water | Flowing waves and rolling currents | 11 | Blue | Sun |
-| Flame | Rising flame tongues and burning arcs | 9 | Orange-red | Sun |
-| Thunder | High-speed lightning and angular cuts | 7 | Yellow | Sun |
-| Wind | Rotating gusts and sickle-like arcs | 9 | Green | Sun |
-| Stone | Heavy fractures and rock shards | 5 | Gray | Sun |
-| Insect | Fine wing-like arcs and precise stings | 5 | Lavender blue | Water |
-| Serpent | Winding paths and coiling trails | 5 | Lavender | Water |
-| Flower | Petal loops and graceful circular cuts | 7 | Light pink | Water |
-| Love | Elastic ribbon-like curves | 6 | Dark pink | Flame |
-| Sound | Concentric shock rings and rhythmic pulses | 5 | Amber | Thunder |
-| Beast | Unpredictable claw marks | 11 | Indigo gray | Wind |
-| Mist | Obscuring fog banks and disappearing cuts | 7 | White | Wind |
+- Display name, username, bio, location, company and website
+- GitHub social accounts and manually configured links
+- ORCID, including a manually supplied ORCID URL
+- Followers, following, public repositories and stars
+- Top repository languages and pinned repositories
+- Total contributions and the daily contribution calendar
 
-The style lineage and colour families are based on the reference material listed under Attribution. The renderer creates original ASCII motion motifs, not screenshots, character art or copied anime frames. In the source material, most elemental visuals represent the swordsman's movements and are not literal elemental attacks.
+The workflow fetches public profile fields and the contribution calendar through GitHub GraphQL. Missing or private fields are omitted. Social accounts not exposed by GitHub can be added under `socials`, and ORCID can be set under `orcid`.
+
+## Composition and anime-inspired corner art
+
+The generated profile uses an editorial, paper-like dark layout with restrained typography, thin separators, metric columns, contribution heatmap, repository panels and configurable corner decorations.
+
+Each corner can be configured independently in `readme.corners`:
+
+- `fire`: animated breathing flame
+- `titan`: original freedom-wing geometry
+- `demon`: original sword-form geometry
+- `cursed`, `chakra`, `pirate`, `spirit`, `hunter`, `dragon`
+- `none`: no decoration
+
+The anime presets are original motifs inspired by broad genre visual language. They are not official anime artwork, character illustrations, studio logos or copied screenshots. This avoids bundling unlicensed show assets. For freely reusable animated ASCII scenes and effects, the renderer uses [ascii.rest](https://ascii.rest/), an MIT-licensed library.
 
 ## Quick start
 
@@ -48,90 +46,57 @@ Requires Node.js 22 or newer.
 ```sh
 npm install
 cp config.example.json gitbreathing.json
-# Edit gitbreathing.json, then render with a contribution count.
+# Edit username, selected profile fields and corner motifs.
+npm run build
 CONTRIBUTIONS=1200 npm run render
+npm run render:profile
 ```
 
-Generated files:
+## Generated files
 
 | File | Purpose |
 | --- | --- |
-| `dist/slash.svg` | Animated ASCII SVG for GitHub README |
+| `dist/profile.svg` | Complete GitHub profile composition, embed this in README |
+| `dist/slash.svg` | Animated breathing artwork |
 | `dist/slash.gif` | Animated raster fallback |
-| `dist/slash.png` | Static first-frame preview |
-| `dist/slash.txt` | Plain-text ASCII frame |
-| `dist/metadata.json` | Inputs, power, styles and output metadata |
-
-## Test locally
-
-```sh
-npm run build
-CONTRIBUTIONS=0 npm run render
-CONTRIBUTIONS=1200 npm run render
-CONTRIBUTIONS=5000 npm run render
-```
-
-Each render overwrites `dist/`. Inspect `dist/metadata.json` for the resolved contribution power and selected styles. For deterministic output, run the same config, seed and contribution count twice and compare the SHA-256 hashes of the generated files.
-
-## Embed in a profile README
-
-```html
-<p align="center">
-  <img src="https://raw.githubusercontent.com/USERNAME/REPOSITORY/BRANCH/dist/slash.svg" width="480" alt="Animated GitBreathing ASCII artwork">
-</p>
-```
-
-Use the GIF if the target Markdown renderer does not animate SVG:
-
-```md
-![GitBreathing animated slash](https://gitlab.com/USERNAME/REPOSITORY/-/raw/BRANCH/dist/slash.gif)
-```
-
-## Configuration
-
-Copy `config.example.json` to `gitbreathing.json`.
-
-| Key | Description |
-| --- | --- |
-| `username` | Account whose activity determines power |
-| `platform` | `github`, `gitlab` or `custom` |
-| `styles` | Ordered styles, e.g. `["sun", "water", "mist"]` |
-| `styleWeights` | Per-style intensity multiplier |
-| `styleColors` | Optional per-style colour palette |
-| `maxContributions` | Activity count at which maximum power is reached |
-| `frames` / `fps` | GIF frame count and frame rate |
-| `powerCurve` | Contribution response curve |
-| `seed` | Optional explicit deterministic seed |
-| `outputDir` | Generated asset directory |
-
-The maximum art canvas is 64 × 30 characters. Higher contribution power increases the number of active slash layers, motif complexity and particle density. The selected styles, order, seed and user identity affect the composition.
+| `dist/slash.png` | Static first frame |
+| `dist/slash.txt` | Plain-text frame |
+| `dist/profile-data.json` | Public GitHub data fetched by the workflow |
+| `dist/metadata.json` | Rendering metadata |
 
 ## GitHub Actions
 
-Copy `.github/workflows/gitbreathing.yml` into the repository containing `gitbreathing.json`. The workflow runs daily, manually and on repository pushes other than generated `dist/` updates. It queries the configured GitHub account's contribution calendar, generates the assets and commits them.
+The included workflow fetches the configured GitHub user's public profile, contribution calendar, repository metadata, pinned repositories and social accounts. It then renders both the breathing artwork and the complete profile SVG and commits the outputs.
 
-Enable **Settings → Actions → General → Workflow permissions → Read and write permissions** if the workflow cannot push. If your repository policy restricts the default token, use a repository-scoped token stored as `GH_TOKEN`. The token is consumed only inside your runner.
+Enable **Settings → Actions → General → Workflow permissions → Read and write permissions** if the workflow cannot push. GitHub's contribution total includes qualifying commits, pull requests, issues and code reviews.
 
-GitHub's `totalContributions` includes qualifying commits, pull requests, issues and code reviews. It is not a commit-only metric.
+## Configuration
 
-## GitLab CI/CD
+The `readme.show` array controls visibility. The `readme.corners` object controls each corner independently. Manual social links and ORCID are supported separately:
 
-The included `.gitlab-ci.yml` runs on schedules, manual pipelines and repository pushes. Add a masked `GITLAB_TOKEN` CI/CD variable with API read and repository write access. The sample pipeline counts GitLab Events API activity over a one-year window. This is an approximation, not a canonical contribution-calendar total. You can override it by setting `CONTRIBUTIONS` as a CI/CD variable.
+```json
+{
+  "socials": {
+    "Instagram": "https://instagram.com/your-handle",
+    "LinkedIn": "https://linkedin.com/in/your-handle"
+  },
+  "orcid": "https://orcid.org/0000-0000-0000-0000"
+}
+```
 
-## Cost and privacy
+## Privacy and cost
 
-GitBreathing has no central service. Rendering runs in the user's browser, local environment or CI runner. API requests, CI minutes and storage use the user's own platform account and quotas. GitBreathing does not collect contribution data or credentials.
+GitBreathing has no hosted backend, telemetry or central token storage. GitHub data is fetched in the user's own GitHub Actions runner. The generated profile SVG contains only fields selected in the configuration. Keep private tokens in repository secrets, never in `gitbreathing.json`.
 
 ## Attribution
 
-Created by **Dev Borah**:
-- GitHub: https://github.com/bitzzdev
-- GitLab: https://gitlab.com/bitzzdev
+Created by [Dev Borah](https://bitz.is-a.dev/).
 
-**ASCII renderer:** [ascii.rest](https://ascii.rest/) by [@bas3line](https://github.com/bas3line), MIT licensed. GitBreathing uses the package API to play custom ASCII pieces and generate animated SVGs. No ascii.rest source files have been copied into this repository. See [ascii.rest documentation](https://ascii.rest/docs/) and [its MIT licence](https://github.com/bas3line/ascii/blob/main/LICENSE).
+- [ascii.rest](https://ascii.rest/), MIT-licensed animated ASCII renderer.
+- GitBreathing's original SVG corner motifs and profile layout are part of this repository under MIT.
 
-**Breathing-style reference:** [Breathing Style, Kimetsu no Yaiba Wiki](https://kimetsu-no-yaiba.fandom.com/wiki/Breathing_Style), plus the linked style pages for the lineage and visual motifs. The wiki community content is licensed under [CC BY-SA](https://creativecommons.org/licenses/by-sa/3.0/) unless otherwise noted. GitBreathing uses it as a factual reference and does not copy its prose or artwork. GitBreathing is an independent fan-made project and is not affiliated with or endorsed by the author or publisher of Demon Slayer.
+GitBreathing is an independent fan-made project. Anime-inspired presets are original visual motifs and are not affiliated with or endorsed by any anime publisher or studio.
 
 ## License
 
-GitBreathing's original source code is MIT licensed. Third-party dependencies retain their respective licences.
+MIT.
