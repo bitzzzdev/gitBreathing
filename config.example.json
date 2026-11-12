@@ -66,7 +66,9 @@
       "reviews",
       "gists",
       "organizations",
-      "starredRepos"
+      "starredRepos",
+      "email",
+      "joined"
     ],
     "layout": "editorial",
     "theme": "portfolio-paper",
@@ -80,7 +82,22 @@
       "bottomLeft": "demon",
       "bottomRight": "fire"
     },
-    "showCornerLabels": false
+    "showCornerLabels": false,
+    "visualizations": {
+      "total": {
+        "enabled": true,
+        "style": "number",
+        "palette": "mono"
+      },
+      "daily": {
+        "enabled": true,
+        "style": "heatmap",
+        "palette": "mono",
+        "cellSize": 10,
+        "cellGap": 3,
+        "weekdays": true
+      }
+    }
   },
   "effects": {
     "glow": true,

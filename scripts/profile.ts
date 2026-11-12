@@ -74,6 +74,8 @@ let px=58;
 if(show.has('location')&&location){outParts.push(pill(px,194,'⌖ '+location));px+=Math.min(230,location.length*7+45);}
 if(show.has('company')&&company){outParts.push(pill(px,194,company));px+=Math.min(220,company.length*7+32);}
 if(show.has('website')&&website)outParts.push(tx(58,225,website,10,'#b7c2b3',500,true));
+if(show.has('email')&&user.email)outParts.push(tx(58,242,'EMAIL  '+user.email,10,'#aab6a8',400,true));
+if(show.has('joined')&&user.createdAt)outParts.push(tx(58,302,'GITHUB MEMBER SINCE  '+String(user.createdAt).slice(0,10),9,'#8e988d',400,true));
 if(show.has('socials')){let sx=58;for(const s of socials.slice(0,8)){outParts.push(pill(sx,258,String(s.name)));sx+=Math.min(210,String(s.name).length*7+32);if(sx>1050)break;}}
 if(show.has('orcid')&&orcid)outParts.push(tx(58,286,'ORCID  '+orcid,10,'#aab6a8',400,true));
 outParts.push(ln(310));
