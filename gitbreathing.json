@@ -5,6 +5,16 @@
     "sun",
     "moon",
     "water",
+    "flame",
+    "thunder",
+    "wind",
+    "stone",
+    "insect",
+    "serpent",
+    "flower",
+    "love",
+    "sound",
+    "beast",
     "mist"
   ],
   "styleWeights": {

@@ -1,13 +1,43 @@
 # GitBreathing
 
-Procedural, deterministic breathing-style pixel slash art for GitHub and GitLab profile READMEs. Contribution activity controls the slash's strength, density and detail. GitBreathing produces **both SVG and animated GIF**, plus a PNG preview and metadata.
+Contribution-powered, deterministic **animated ASCII breathing art** for GitHub and GitLab profile READMEs. Your activity controls the slash's intensity, density, secondary cuts and particle field. The renderer produces an animated ASCII SVG, GIF, PNG preview, plain-text frame and metadata.
 
-- No character sprites or rank system. Only breathing-style slash effects.
-- Sun, Moon, Water and Mist layers can be combined and reordered.
-- Username, style composition and configuration seed the renderer, producing reproducible user-specific artwork.
-- Contribution power scales from faint, sparse art to a dense 128 × 128 slash.
-- No hosted backend, telemetry, central token storage or paid image API.
-- Each user runs the workflow in their own GitHub Actions or GitLab CI/CD environment.
+- Fourteen breathing styles with individual motion motifs and colour palettes.
+- Combine and reorder styles to build layered techniques.
+- ASCII-first rendering at 64 × 30 character cells, with animated SVG and GIF output.
+- Contribution power changes the density and complexity of the art.
+- Deterministic output for the same user, seed, style order, contribution count and renderer version.
+- No characters, character sprites, ranks, hosted backend, telemetry or central token storage.
+- Runs locally or in the user's own GitHub Actions / GitLab CI environment.
+
+## Preview
+
+<p align="center">
+  <img src="https://raw.githubusercontent.com/bitzzdev/gitBreathing/main/dist/slash.svg" width="480" alt="Animated GitBreathing ASCII artwork">
+</p>
+
+The generated SVG is animated and works in GitHub READMEs without JavaScript. The GIF is provided for clients that do not animate SVG.
+
+## Breathing styles
+
+| Style | Visual language | Branch |
+| --- | --- | --- |
+| Sun | Solar arcs, radiating spokes and central slash | Origin |
+| Moon | Layered crescents and curved cuts | Sun |
+| Water | Flowing waves and rolling currents | Sun |
+| Flame | Rising flame tongues and burning arcs | Sun |
+| Thunder | High-speed lightning and angular cuts | Sun |
+| Wind | Rotating gusts and sickle-like arcs | Sun |
+| Stone | Heavy fractures and rock shards | Sun |
+| Insect | Fine wing-like arcs and precise stings | Water |
+| Serpent | Winding paths and coiling trails | Water |
+| Flower | Petal loops and graceful circular cuts | Water |
+| Love | Elastic ribbon-like curves | Flame |
+| Sound | Concentric shock rings and rhythmic pulses | Thunder |
+| Beast | Unpredictable claw marks | Wind |
+| Mist | Obscuring fog banks and disappearing cuts | Wind |
+
+The style lineage and colour families are based on the reference material listed under Attribution. The renderer creates original ASCII motion motifs, not screenshots, character art or copied anime frames. In the source material, most elemental visuals represent the swordsman's movements and are not literal elemental attacks.
 
 ## Quick start
 
@@ -24,133 +54,82 @@ Generated files:
 
 | File | Purpose |
 | --- | --- |
-| `dist/slash.svg` | Crisp, scalable static README artwork |
-| `dist/slash.gif` | Animated slash effect |
-| `dist/slash.png` | Static raster preview |
-| `dist/metadata.json` | Inputs and generated power metadata |
+| `dist/slash.svg` | Animated ASCII SVG for GitHub README |
+| `dist/slash.gif` | Animated raster fallback |
+| `dist/slash.png` | Static first-frame preview |
+| `dist/slash.txt` | Plain-text ASCII frame |
+| `dist/metadata.json` | Inputs, power, styles and output metadata |
 
-## Test it locally
-
-There is currently no separate unit-test script. Use the build and render commands below as a TypeScript/build check and an end-to-end renderer smoke test.
+## Test locally
 
 ```sh
-# Type-check and build the browser studio
 npm run build
-
-# Render low-, medium- and high-activity samples
 CONTRIBUTIONS=0 npm run render
 CONTRIBUTIONS=1200 npm run render
 CONTRIBUTIONS=5000 npm run render
 ```
 
-Each render overwrites the files in `dist/`. With the example configuration (`maxContributions: 5000`, `resolution: 128`, `powerCurve: 1`), these counts correspond to 0%, 24% and 100% contribution power. Effective resolution and detail increase with power. Inspect `dist/metadata.json` after each run to check the actual power and resolution.
+Each render overwrites `dist/`. Inspect `dist/metadata.json` for the resolved contribution power and selected styles. For deterministic output, run the same config, seed and contribution count twice and compare the SHA-256 hashes of the generated files.
 
-To verify deterministic output, run the same render twice without changing the config, seed or contribution count:
-
-```sh
-CONTRIBUTIONS=1200 npm run render
-sha256sum dist/slash.svg dist/slash.gif dist/slash.png > /tmp/gitbreathing-first.sha256
-CONTRIBUTIONS=1200 npm run render
-sha256sum -c /tmp/gitbreathing-first.sha256
-```
-
-All three files should report `OK`.
-
-## Example README output
-
-After rendering, preview the generated assets in a README with:
-
-```md
-![GitBreathing static slash](dist/slash.svg)
-
-![GitBreathing animated slash](dist/slash.gif)
-```
-
-To display them in a separate profile README, replace the placeholders with your repository and branch:
+## Embed in a profile README
 
 ```html
 <p align="center">
-  <img src="https://raw.githubusercontent.com/USERNAME/REPOSITORY/BRANCH/dist/slash.svg" width="128" alt="GitBreathing static slash">
-  <img src="https://raw.githubusercontent.com/USERNAME/REPOSITORY/BRANCH/dist/slash.gif" width="128" alt="GitBreathing animated slash">
+  <img src="https://raw.githubusercontent.com/USERNAME/REPOSITORY/BRANCH/dist/slash.svg" width="480" alt="Animated GitBreathing ASCII artwork">
 </p>
 ```
 
-## Live demo: Dev Borah (@bitzzdev)
+Use the GIF if the target Markdown renderer does not animate SVG:
 
-The artwork below is generated from **Dev Borah's public GitHub contribution calendar** using the GitBreathing renderer. The workflow refreshes the SVG, animated GIF, PNG preview and metadata daily. It uses the contribution calendar total, which includes qualifying commits, pull requests, issues and code reviews, not commits alone.
-
-<p align="center">
-  <img src="https://raw.githubusercontent.com/bitzzdev/gitBreathing/main/dist/slash.svg" width="160" alt="GitBreathing contribution breathing artwork for bitzzdev">
-  <img src="https://raw.githubusercontent.com/bitzzdev/gitBreathing/main/dist/slash.gif" width="160" alt="Animated GitBreathing contribution breathing artwork for bitzzdev">
-</p>
-
-<p align="center">
-  <a href="https://github.com/bitzzdev"><strong>GitHub: @bitzzdev</strong></a>
-  ·
-  <a href="https://github.com/bitzzdev/gitBreathing/actions/workflows/gitbreathing.yml">Generation workflow</a>
-  ·
-  <a href="https://raw.githubusercontent.com/bitzzdev/gitBreathing/main/dist/metadata.json">Latest render metadata</a>
-</p>
-
-The same assets can be embedded in your own profile README by replacing the repository path with your own generated-artifact repository. The GIF is animated and uses a dark backing for reliable GIF transparency behavior; SVG is static and scalable.
+```md
+![GitBreathing animated slash](https://raw.githubusercontent.com/USERNAME/REPOSITORY/BRANCH/dist/slash.gif)
+```
 
 ## Configuration
 
-Copy `config.example.json` to `gitbreathing.json`. Commit this file to your profile repository.
+Copy `config.example.json` to `gitbreathing.json`.
 
 | Key | Description |
 | --- | --- |
 | `username` | Account whose activity determines power |
 | `platform` | `github`, `gitlab` or `custom` |
-| `styles` | Ordered style layers, e.g. `["sun", "water"]` |
-| `styleWeights` | Per-style intensity multiplier, 0 to 3 |
-| `styleColors` | Optional three-color palette per style |
-| `effects` | Toggle glow, particles, secondary cuts and motion; tune particle density and slash thickness |
+| `styles` | Ordered styles, e.g. `["sun", "water", "mist"]` |
+| `styleWeights` | Per-style intensity multiplier |
+| `styleColors` | Optional per-style colour palette |
 | `maxContributions` | Activity count at which maximum power is reached |
-| `resolution` | Output resolution, 8 to 128 |
 | `frames` / `fps` | GIF frame count and frame rate |
-| `powerCurve` | Contribution response curve, 0.1 to 4 |
-| `background` | `transparent` or `dark` |
-| `seed` | Optional explicit seed; empty uses platform and username |
+| `powerCurve` | Contribution response curve |
+| `seed` | Optional explicit deterministic seed |
+| `outputDir` | Generated asset directory |
 
-The same username, seed, style order, configuration, contribution count and renderer version produce the same frames. Animation phase is deterministic. Changing the contribution count changes the power, effective resolution and detail. The configured resolution is the maximum; low activity scales the actual output down toward 8 × 8. Effects can be individually enabled or disabled, and particle density and slash thickness are configurable.
+The maximum art canvas is 64 × 30 characters. Higher contribution power increases the number of active slash layers, motif complexity and particle density. The selected styles, order, seed and user identity affect the composition.
 
 ## GitHub Actions
 
-Copy `.github/workflows/gitbreathing.yml` into the repository containing `gitbreathing.json`. The workflow runs daily, manually, and on repository pushes other than generated `dist/` asset updates. It queries the configured GitHub account's contribution calendar with the repository's `GITHUB_TOKEN`, generates all output files and commits changes.
+Copy `.github/workflows/gitbreathing.yml` into the repository containing `gitbreathing.json`. The workflow runs daily, manually and on repository pushes other than generated `dist/` updates. It queries the configured GitHub account's contribution calendar, generates the assets and commits them.
 
-Enable **Settings → Actions → General → Workflow permissions → Read and write permissions** if the workflow cannot push. For a private target profile or organization policy that restricts the default token, use a repository-scoped token stored as `GH_TOKEN` and change the workflow's secret reference. The token is consumed only inside the user's runner.
+Enable **Settings → Actions → General → Workflow permissions → Read and write permissions** if the workflow cannot push. If your repository policy restricts the default token, use a repository-scoped token stored as `GH_TOKEN`. The token is consumed only inside your runner.
 
-GitHub's `totalContributions` includes qualifying commits, pull requests, issues and code reviews. It is not a commit-only metric. GitHub's contribution calendar uses its own qualifying-activity rules.
+GitHub's `totalContributions` includes qualifying commits, pull requests, issues and code reviews. It is not a commit-only metric.
 
 ## GitLab CI/CD
 
-The included `.gitlab-ci.yml` runs on schedules, manual pipelines and repository pushes. Its generated-art commit message is excluded to prevent a pipeline loop. Add a masked `GITLAB_TOKEN` CI/CD variable with API read access and repository write access. The pipeline uses it to fetch activity and push generated files. You can alternatively set `CONTRIBUTIONS` directly as a CI/CD variable.
+The included `.gitlab-ci.yml` runs on schedules, manual pipelines and repository pushes. Add a masked `GITLAB_TOKEN` CI/CD variable with API read and repository write access. The sample pipeline counts GitLab Events API activity over a one-year window. This is an approximation, not a canonical contribution-calendar total. You can override it by setting `CONTRIBUTIONS` as a CI/CD variable.
 
-The GitLab Events API is an activity-event feed, not a canonical contribution-calendar total. The sample pipeline paginates the Events API and uses the returned event count as an approximate activity metric. It accepts an explicit `CONTRIBUTIONS` override, which skips the API count. This is not a canonical contribution-calendar total: GitLab event types and retention policies differ by instance. For an exact custom metric, provide the count through your own CI variable or replace the fetch step with an API query matching your definition.
+## Cost and privacy
 
-For a scheduled pipeline, configure a daily schedule in GitLab. Ensure the token is available to scheduled pipelines and the target branch permits CI pushes. Never commit tokens to `gitbreathing.json` or source control.
-
-## Cost and privacy model
-
-GitBreathing does not run a central service. Rendering happens in the user's own browser, local environment or CI runner. API requests, CI minutes and storage are charged against the user's own platform account and quotas. GitBreathing does not collect contribution data or credentials.
-
-## Development
-
-```sh
-npm install
-npm run dev
-npm run build
-CONTRIBUTIONS=1200 npm run render
-```
+GitBreathing has no central service. Rendering runs in the user's browser, local environment or CI runner. API requests, CI minutes and storage use the user's own platform account and quotas. GitBreathing does not collect contribution data or credentials.
 
 ## Attribution
 
-Created by **Dev Borah**. If you use GitBreathing, retain attribution and include these creator profile links in your project documentation:
-
+Created by **Dev Borah**:
 - GitHub: https://github.com/bitzzdev
 - GitLab: https://gitlab.com/bitzzdev
 
+**ASCII renderer:** [ascii.rest](https://ascii.rest/) by [@bas3line](https://github.com/bas3line), MIT licensed. GitBreathing uses the package API to play custom ASCII pieces and generate animated SVGs. No ascii.rest source files have been copied into this repository. See [ascii.rest documentation](https://ascii.rest/docs/) and [its MIT licence](https://github.com/bas3line/ascii/blob/main/LICENSE).
+
+**Breathing-style reference:** [Breathing Style, Kimetsu no Yaiba Wiki](https://kimetsu-no-yaiba.fandom.com/wiki/Breathing_Style), plus the linked style pages for the lineage and visual motifs. The wiki community content is licensed under [CC BY-SA](https://creativecommons.org/licenses/by-sa/3.0/) unless otherwise noted. GitBreathing uses it as a factual reference and does not copy its prose or artwork. GitBreathing is an independent fan-made project and is not affiliated with or endorsed by the author or publisher of Demon Slayer.
+
 ## License
 
-GitBreathing source code is licensed under the MIT License. Third-party dependencies retain their respective licenses.
+GitBreathing's original source code is MIT licensed. Third-party dependencies retain their respective licences.

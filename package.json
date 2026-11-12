@@ -1,7 +1,7 @@
 {
   "name": "gitbreathing",
-  "version": "1.0.0",
-  "description": "Deterministic procedural breathing-style pixel slash art for GitHub and GitLab profiles",
+  "version": "1.1.0",
+  "description": "Deterministic contribution-powered animated ASCII breathing-style art for GitHub and GitLab profiles",
   "type": "module",
   "license": "MIT",
   "scripts": {
@@ -11,6 +11,7 @@
     "render:preview": "CONTRIBUTIONS=1200 tsx scripts/render.ts"
   },
   "dependencies": {
+    "ascii.rest": "^1.0.0",
     "gifenc": "^1.0.3",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
