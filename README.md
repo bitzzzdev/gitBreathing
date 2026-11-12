@@ -20,22 +20,22 @@ The generated SVG is animated and works in GitHub READMEs without JavaScript. Th
 
 ## Breathing styles
 
-| Style | Visual language | Branch |
+| Style | Visual language | Known forms | Reference colour | Branch |
 | --- | --- | --- |
-| Sun | Solar arcs, radiating spokes and central slash | Origin |
-| Moon | Layered crescents and curved cuts | Sun |
+| Sun | Solar arcs, radiating spokes and central slash | 13 | Black | Origin |
+| Moon | Layered crescents and curved cuts | 16 | Light purple | Sun |
 | Water | Flowing waves and rolling currents | Sun |
-| Flame | Rising flame tongues and burning arcs | Sun |
-| Thunder | High-speed lightning and angular cuts | Sun |
-| Wind | Rotating gusts and sickle-like arcs | Sun |
-| Stone | Heavy fractures and rock shards | Sun |
-| Insect | Fine wing-like arcs and precise stings | Water |
-| Serpent | Winding paths and coiling trails | Water |
-| Flower | Petal loops and graceful circular cuts | Water |
-| Love | Elastic ribbon-like curves | Flame |
-| Sound | Concentric shock rings and rhythmic pulses | Thunder |
-| Beast | Unpredictable claw marks | Wind |
-| Mist | Obscuring fog banks and disappearing cuts | Wind |
+| Flame | Rising flame tongues and burning arcs | 9 | Orange-red | Sun |
+| Thunder | High-speed lightning and angular cuts | 7 | Yellow | Sun |
+| Wind | Rotating gusts and sickle-like arcs | 9 | Green | Sun |
+| Stone | Heavy fractures and rock shards | 5 | Gray | Sun |
+| Insect | Fine wing-like arcs and precise stings | 5 | Lavender blue | Water |
+| Serpent | Winding paths and coiling trails | 5 | Lavender | Water |
+| Flower | Petal loops and graceful circular cuts | 7 | Light pink | Water |
+| Love | Elastic ribbon-like curves | 6 | Dark pink | Flame |
+| Sound | Concentric shock rings and rhythmic pulses | 5 | Amber | Thunder |
+| Beast | Unpredictable claw marks | 11 | Indigo gray | Wind |
+| Mist | Obscuring fog banks and disappearing cuts | 7 | White | Wind |
 
 The style lineage and colour families are based on the reference material listed under Attribution. The renderer creates original ASCII motion motifs, not screenshots, character art or copied anime frames. In the source material, most elemental visuals represent the swordsman's movements and are not literal elemental attacks.
 

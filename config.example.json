@@ -35,9 +35,9 @@
   },
   "styleColors": {
     "sun": [
-      "#f5b942",
-      "#ff7a1a",
-      "#fff0a6"
+      "#53535d",
+      "#a0a0aa",
+      "#f4f4f5"
     ],
     "moon": [
       "#9b8cff",
@@ -100,9 +100,9 @@
       "#e2e8f0"
     ],
     "mist": [
-      "#4e9b9c",
-      "#a2e1dd",
-      "#f1ffff"
+      "#9ca3af",
+      "#d9e2ea",
+      "#ffffff"
     ]
   },
   "maxContributions": 5000,
