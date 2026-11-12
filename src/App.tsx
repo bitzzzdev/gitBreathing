@@ -56,8 +56,8 @@ export default function App() {
   const [cornerThemes, setCornerThemes] = useState<Record<'topLeft'|'topRight'|'bottomLeft'|'bottomRight', CornerTheme>>({topLeft:'fire',topRight:'titan',bottomLeft:'demon',bottomRight:'fire'});
   const [animePreset, setAnimePreset] = useState('original');
   const [showCornerLabels, setShowCornerLabels] = useState(false);
-  const [orcidUrl, setOrcidUrl] = useState('https://orcid.org/0009-0004-2013-2999');
-  const [socialLines, setSocialLines] = useState('GitHub|https://github.com/bitzzdev\nGitLab|https://gitlab.com/bitzzdev\nInstagram|https://instagram.com/bitz.dev\nLinkedIn|https://linkedin.com/in/bitzzdev\nX|https://x.com/bitzzdev\nKo-fi|https://ko-fi.com/bitzzdev\nReddit|https://www.reddit.com/user/bitzzdev/\nYouTube|https://www.youtube.com/@bitzzzdev\nWebsite|https://bitz.is-a.dev/');
+  const [orcidUrl, setOrcidUrl] = useState('');
+  const [socialLines, setSocialLines] = useState('GitHub|https://github.com/bitzzdev\nGitLab|https://gitlab.com/bitzzdev\nInstagram|https://instagram.com/bitz.dev\nLinkedIn|https://linkedin.com/in/bitzzdev\nKo-fi|https://ko-fi.com/bitzzdev\nReddit|https://www.reddit.com/user/bitzzdev/\nYouTube|https://www.youtube.com/@bitzzzdev');
 
   const power = useMemo(() => Math.pow(Math.min(1, count / Math.max(1, max)), curve), [count, max, curve]);
   const piece = useMemo(() => createBreathingPiece({ styles, power, seed: `${platform}:${user.toLowerCase()}` }), [styles, power, platform, user]);

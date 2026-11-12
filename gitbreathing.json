@@ -62,17 +62,14 @@
     "strokeScale": 1
   },
   "website": "https://bitz.is-a.dev/",
-  "orcid": "https://orcid.org/0009-0004-2013-2999",
   "socials": {
     "GitHub": "https://github.com/bitzzdev",
     "GitLab": "https://gitlab.com/bitzzdev",
     "Instagram": "https://instagram.com/bitz.dev",
     "LinkedIn": "https://linkedin.com/in/bitzzdev",
-    "X": "https://x.com/bitzzdev",
     "Ko-fi": "https://ko-fi.com/bitzzdev",
     "Reddit": "https://www.reddit.com/user/bitzzdev/",
-    "YouTube": "https://www.youtube.com/@bitzzzdev",
-    "Website": "https://bitz.is-a.dev/"
+    "YouTube": "https://www.youtube.com/@bitzzzdev"
   },
   "readme": {
     "show": [
