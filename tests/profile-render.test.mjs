@@ -8,7 +8,7 @@ import test from 'node:test';
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 
-async function renderProfile(show) {
+async function renderProfile(show, includeDaily = false) {
   const temporary = await mkdtemp(path.join(tmpdir(), 'gitbreathing-profile-'));
   const outputDir = path.join(temporary, 'dist');
   const configPath = path.join(temporary, 'config.json');
@@ -42,7 +42,7 @@ async function renderProfile(show) {
         },
         visualizations: {
           total: { enabled: false },
-          daily: { enabled: false },
+          daily: { enabled: includeDaily, style: 'heatmap', weekdays: includeDaily },
         },
       },
     };
@@ -77,7 +77,13 @@ async function renderProfile(show) {
             totalPullRequestReviewContributions: 4,
             contributionCalendar: {
               totalContributions: 20,
-              weeks: [],
+              weeks: includeDaily ? [{
+                contributionDays: Array.from({ length: 7 }, (_, index) => ({
+                  date: `2026-11-0${index + 1}`,
+                  contributionCount: index === 2 ? 5 : index === 4 ? 2 : 0,
+                  color: '#cbd5c8',
+                })),
+              }] : [],
             },
           },
           repositoryDiscussions: { totalCount: 1 },
@@ -128,4 +134,10 @@ test('profile fields remain independent and repository metrics use fetched data'
   for (const corner of ['fire-top-left', 'fire-top-right', 'fire-bottom-left', 'fire-bottom-right']) {
     assert.ok(withIndependentLinks.includes(corner), `missing namespaced animation: ${corner}`);
   }
+
+  const withDailyLabels = await renderProfile(['dailyContributions'], true);
+  assert.match(withDailyLabels, />MON<\/text>/);
+  assert.match(withDailyLabels, />WED<\/text>/);
+  assert.match(withDailyLabels, />FRI<\/text>/);
+  assert.match(withDailyLabels, /<rect x="92/);
 });
