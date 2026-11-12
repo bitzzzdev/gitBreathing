@@ -29,6 +29,52 @@ Generated files:
 | `dist/slash.png` | Static raster preview |
 | `dist/metadata.json` | Inputs and generated power metadata |
 
+## Test it locally
+
+There is currently no separate unit-test script. Use the build and render commands below as a TypeScript/build check and an end-to-end renderer smoke test.
+
+```sh
+# Type-check and build the browser studio
+npm run build
+
+# Render low-, medium- and high-activity samples
+CONTRIBUTIONS=0 npm run render
+CONTRIBUTIONS=1200 npm run render
+CONTRIBUTIONS=5000 npm run render
+```
+
+Each render overwrites the files in `dist/`. With the example configuration (`maxContributions: 5000`, `resolution: 128`, `powerCurve: 1`), these counts correspond to 0%, 24% and 100% contribution power. Effective resolution and detail increase with power. Inspect `dist/metadata.json` after each run to check the actual power and resolution.
+
+To verify deterministic output, run the same render twice without changing the config, seed or contribution count:
+
+```sh
+CONTRIBUTIONS=1200 npm run render
+sha256sum dist/slash.svg dist/slash.gif dist/slash.png > /tmp/gitbreathing-first.sha256
+CONTRIBUTIONS=1200 npm run render
+sha256sum -c /tmp/gitbreathing-first.sha256
+```
+
+All three files should report `OK`.
+
+## Example README output
+
+After rendering, preview the generated assets in a README with:
+
+```md
+![GitBreathing static slash](dist/slash.svg)
+
+![GitBreathing animated slash](dist/slash.gif)
+```
+
+To display them in a separate profile README, replace the placeholders with your repository and branch:
+
+```html
+<p align="center">
+  <img src="https://raw.githubusercontent.com/USERNAME/REPOSITORY/BRANCH/dist/slash.svg" width="128" alt="GitBreathing static slash">
+  <img src="https://raw.githubusercontent.com/USERNAME/REPOSITORY/BRANCH/dist/slash.gif" width="128" alt="GitBreathing animated slash">
+</p>
+```
+
 ## README embed
 
 Embed both generated files directly so the README displays the static vector slash and the animated slash. GitHub and GitLab may apply different SVG security/rendering rules, so the GIF remains the animated compatibility output.
