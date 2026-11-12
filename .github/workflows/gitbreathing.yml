@@ -1,0 +1,42 @@
+name: Update GitBreathing
+on:
+  workflow_dispatch:
+  push:
+    paths-ignore:
+      - dist/**
+  schedule:
+    - cron: '17 3 * * *'
+permissions:
+  contents: write
+jobs:
+  render:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: true
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - run: npm install --no-audit --no-fund
+      - name: Fetch GitHub contribution total
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        shell: bash
+        run: |
+          USERNAME=$(node -p "JSON.parse(require('fs').readFileSync('gitbreathing.json','utf8')).username")
+          QUERY='query($login:String!){user(login:$login){contributionsCollection{contributionCalendar{totalContributions}}}}'
+          BODY=$(jq -n --arg q "$QUERY" --arg u "$USERNAME" '{query:$q,variables:{login:$u}}')
+          RESPONSE=$(curl --fail-with-body -fsS -H "Authorization: bearer $GH_TOKEN" -H 'Content-Type: application/json' -d "$BODY" https://api.github.com/graphql)
+          TOTAL=$(printf '%s' "$RESPONSE" | jq -er '.data.user.contributionsCollection.contributionCalendar.totalContributions')
+          echo "CONTRIBUTIONS=$TOTAL" >> "$GITHUB_ENV"
+      - run: npm run render
+      - name: Commit generated assets
+        shell: bash
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add dist/slash.svg dist/slash.gif dist/slash.png dist/metadata.json
+          if git diff --cached --quiet; then echo 'No artwork changes.'; exit 0; fi
+          git commit -m 'chore: update GitBreathing artwork'
+          git push

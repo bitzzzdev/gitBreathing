@@ -1,0 +1,1 @@
+# Contributing\n\nKeep rendering deterministic for a given config and frame. Run `npm run build` before submitting changes. Keep the project free of mandatory paid services, telemetry and central user-data collection.\n
