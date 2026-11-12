@@ -21,10 +21,10 @@ The generated SVG is animated and works in GitHub READMEs without JavaScript. Th
 ## Breathing styles
 
 | Style | Visual language | Known forms | Reference colour | Branch |
-| --- | --- | --- |
+| --- | --- | ---: | --- | --- |
 | Sun | Solar arcs, radiating spokes and central slash | 13 | Black | Origin |
 | Moon | Layered crescents and curved cuts | 16 | Light purple | Sun |
-| Water | Flowing waves and rolling currents | Sun |
+| Water | Flowing waves and rolling currents | 11 | Blue | Sun |
 | Flame | Rising flame tongues and burning arcs | 9 | Orange-red | Sun |
 | Thunder | High-speed lightning and angular cuts | 7 | Yellow | Sun |
 | Wind | Rotating gusts and sickle-like arcs | 9 | Green | Sun |

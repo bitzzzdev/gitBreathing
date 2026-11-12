@@ -35,7 +35,7 @@ export default function App() {
         {IDS.map((id) => <div className="style" key={id}>
           <button onClick={() => toggle(id)}>
             <span className="dots">{STYLES[id].colors.map((color) => <i style={{ background: color }} key={color}/>)}</span>
-            <span className="style-copy"><b>{STYLES[id].name}</b><small>{STYLES[id].parent ? `Derived from ${STYLES[STYLES[id].parent].name}` : 'Origin style'} · ${STYLES[id].forms} known forms · ${STYLES[id].colour}}</small></span>
+            <span className="style-copy"><b>{STYLES[id].name}</b><small>{STYLES[id].parent ? `Derived from ${STYLES[STYLES[id].parent].name}` : 'Origin style'} · {STYLES[id].forms} known forms · {STYLES[id].colour}</small></span>
             <strong>{styles.includes(id) ? 'Selected' : '+'}</strong>
           </button>
           {styles.includes(id) && <div className="order">Layer {styles.indexOf(id) + 1}<button onClick={() => move(id, -1)} aria-label={`Move ${id} up`}>↑</button><button onClick={() => move(id, 1)} aria-label={`Move ${id} down`}>↓</button></div>}
