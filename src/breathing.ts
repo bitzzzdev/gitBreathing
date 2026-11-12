@@ -201,7 +201,7 @@ function drawMotif(id: StyleId, plot: Plot, color: number, power: number, phase:
 }
 
 export function createBreathingPiece(options: BreathingOptions): Piece<BreathingOptions> {
-  const styles = options.styles.length ? options.styles : ['sun'];
+  const styles: StyleId[] = options.styles.length ? options.styles : ['sun'];
   const palette = styles.flatMap((id) => {
     const custom = options.styleColors?.[id];
     return custom?.length ? custom.slice(0, 3) : [...STYLES[id].colors];
@@ -216,7 +216,7 @@ export function createBreathingPiece(options: BreathingOptions): Piece<Breathing
     loop: 2,
     palette,
     ground: '#080a10',
-    cell: 1.65,
+    cell: 2,
     options,
   } satisfies Meta<BreathingOptions>;
 
@@ -224,7 +224,7 @@ export function createBreathingPiece(options: BreathingOptions): Piece<Breathing
     meta,
     default: (overrides = {}) => {
       const config = { ...options, ...overrides };
-      const active = config.styles.length ? config.styles : ['sun'];
+      const active: StyleId[] = config.styles.length ? config.styles : ['sun'];
       const colors = active.flatMap((id) => {
         const custom = config.styleColors?.[id];
         return custom?.length ? custom.slice(0, 3) : [...STYLES[id].colors];
