@@ -255,7 +255,7 @@ export function createBreathingPiece(options: BreathingOptions): Piece<Breathing
             const custom = config.styleColors?.[previous];
             return sum + (custom?.length ? Math.min(3, custom.length) : 3);
           }, 0);
-          drawMotif(id, plot, colorOffset, power * weight / Math.max(1, weight), phase + index * 0.62, seed ^ hash(id));
+          if (power > 0.04) drawMotif(id, plot, colorOffset, clamp(power * weight, 0, 1), phase + index * 0.62, seed ^ hash(id));
         });
 
         const particles = Math.floor(8 + power * 52);

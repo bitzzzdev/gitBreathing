@@ -59,7 +59,7 @@ await fs.writeFile(path.join(outputDir, 'slash.svg'), animatedSvg, 'utf8');
 const draw = piece.default();
 const width = piece.meta.cols * 12;
 const height = piece.meta.rows * 19;
-const palette = piece.meta.palette;
+const palette = piece.meta.palette ?? [];
 
 function escapeXml(value: string) {
   return value.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&apos;');
