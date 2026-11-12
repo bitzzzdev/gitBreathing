@@ -45,12 +45,15 @@
   "orcid": "",
   "readme": {
     "show": [
+      "avatar",
       "name",
+      "username",
       "bio",
       "location",
       "company",
       "website",
       "socials",
+      "twitter",
       "orcid",
       "followers",
       "following",
@@ -59,7 +62,9 @@
       "languages",
       "contributions",
       "dailyContributions",
+      "streak",
       "pinnedRepos",
+      "topRepos",
       "commits",
       "pullRequests",
       "issues",
@@ -79,7 +84,7 @@
     "corners": {
       "topLeft": "fire",
       "topRight": "titan",
-      "bottomLeft": "demon",
+      "bottomLeft": "vines",
       "bottomRight": "fire"
     },
     "showCornerLabels": false,

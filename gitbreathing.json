@@ -64,19 +64,27 @@
   "website": "https://bitz.is-a.dev/",
   "orcid": "https://orcid.org/0009-0004-2013-2999",
   "socials": {
+    "GitHub": "https://github.com/bitzzdev",
+    "GitLab": "https://gitlab.com/bitzzdev",
     "Instagram": "https://instagram.com/bitz.dev",
     "LinkedIn": "https://linkedin.com/in/bitzzdev",
     "X": "https://x.com/bitzzdev",
+    "Ko-fi": "https://ko-fi.com/bitzzdev",
+    "Reddit": "https://www.reddit.com/user/bitzzdev/",
+    "YouTube": "https://www.youtube.com/@bitzzzdev",
     "Website": "https://bitz.is-a.dev/"
   },
   "readme": {
     "show": [
+      "avatar",
       "name",
+      "username",
       "bio",
       "location",
       "company",
       "website",
       "socials",
+      "twitter",
       "orcid",
       "followers",
       "following",
@@ -85,7 +93,9 @@
       "languages",
       "contributions",
       "dailyContributions",
+      "streak",
       "pinnedRepos",
+      "topRepos",
       "commits",
       "pullRequests",
       "issues",
@@ -105,7 +115,7 @@
     "corners": {
       "topLeft": "fire",
       "topRight": "titan",
-      "bottomLeft": "demon",
+      "bottomLeft": "vines",
       "bottomRight": "fire"
     },
     "showCornerLabels": false,
