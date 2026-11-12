@@ -2,7 +2,9 @@ workflow:
   rules:
     - if: '$CI_PIPELINE_SOURCE == "push" && $CI_COMMIT_MESSAGE =~ /^chore: update GitBreathing artwork$/'
       when: never
-    - when: always
+    - if: '$CI_COMMIT_BRANCH == "dev"'
+      when: always
+    - when: never
 
 stages:
   - render
@@ -51,6 +53,7 @@ render-gitbreathing:
       printf '%s' "$RESPONSE" | jq '{data:.data}' > dist/profile-data.json
     fi
 
+    npm run build
     npm run render
     npm run render:profile
     git config user.name 'GitBreathing CI'
@@ -58,7 +61,7 @@ render-gitbreathing:
     git add dist/slash.svg dist/slash.gif dist/slash.png dist/metadata.json dist/profile.svg dist/profile-data.json
     if ! git diff --cached --quiet; then
       git commit -m "chore: update GitBreathing artwork"
-      git push "https://oauth2:${GITLAB_TOKEN}@${CI_SERVER_HOST}/${CI_PROJECT_PATH}.git" "HEAD:${CI_DEFAULT_BRANCH}"
+      git push "https://oauth2:${GITLAB_TOKEN}@${CI_SERVER_HOST}/${CI_PROJECT_PATH}.git" "HEAD:dev"
     else
       echo "No artwork changes."
     fi

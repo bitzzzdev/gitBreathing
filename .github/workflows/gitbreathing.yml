@@ -2,6 +2,8 @@ name: Update GitBreathing
 on:
   workflow_dispatch:
   push:
+    branches:
+      - dev
     paths-ignore:
       - dist/**
   schedule:
@@ -19,9 +21,10 @@ jobs:
         with:
           node-version: 22
       - run: npm install --no-audit --no-fund
+      - run: npm run build
       - name: Fetch GitHub profile and contribution data
         env:
-          GH_TOKEN: \${{ secrets.GITHUB_TOKEN }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         shell: bash
         run: |
           set -euo pipefail

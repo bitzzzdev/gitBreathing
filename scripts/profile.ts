@@ -1,7 +1,7 @@
 import fs from 'node:fs/promises';
 import path from 'node:path';
 import { isPiece, load } from 'ascii.rest';
-import { svg as asciiSvg } from 'ascii.rest/svg';
+import { namespaced, svg as asciiSvg, wrap } from 'ascii.rest/svg';
 
 type Json = Record<string, any>;
 type Corner = 'none'|'fire'|'titan'|'demon'|'cursed'|'chakra'|'pirate'|'spirit'|'hunter'|'dragon'|'moon'|'vines'|'cave';
@@ -9,12 +9,23 @@ const config = JSON.parse(await fs.readFile(process.env.GITBREATHING_CONFIG || '
 const fireName = 'doom-fire';
 const firePiece = isPiece(fireName) ? await load[fireName]() : null;
 const fireSvg = firePiece ? asciiSvg(firePiece, { dark: true, seconds: 4, fps: 12, scale: 2, label: 'Animated ASCII breathing fire' }) : '';
-const fireViewStart = fireSvg.indexOf('viewBox="');
-const fireViewEnd = fireViewStart >= 0 ? fireSvg.indexOf('"', fireViewStart + 9) : -1;
-const fireViewBox = fireViewStart >= 0 && fireViewEnd > fireViewStart ? fireSvg.slice(fireViewStart + 9, fireViewEnd) : '0 0 80 24';
-const fireOpenEnd = fireSvg.indexOf('>');
-const fireCloseStart = fireSvg.lastIndexOf('</svg>');
-const fireBody = fireOpenEnd >= 0 && fireCloseStart > fireOpenEnd ? fireSvg.slice(fireOpenEnd + 1, fireCloseStart) : '';
+const makeFireSvg = (prefix: string) => {
+ const part = fireSvg ? namespaced(fireSvg, prefix) : null;
+ return part ? wrap(part, 'Animated ASCII breathing fire', 2) : fireSvg;
+};
+const extractFire = (source: string) => {
+ const viewBox = source.match(/\\bviewBox="([^"]+)"/)?.[1] ?? '0 0 80 24';
+ const openEnd = source.indexOf('>');
+ const closeStart = source.lastIndexOf('</svg>');
+ const body = openEnd >= 0 && closeStart > openEnd ? source.slice(openEnd + 1, closeStart) : '';
+ return { viewBox, body };
+};
+const fireArts = {
+ topLeft: extractFire(makeFireSvg('fire-top-left')),
+ topRight: extractFire(makeFireSvg('fire-top-right')),
+ bottomLeft: extractFire(makeFireSvg('fire-bottom-left')),
+ bottomRight: extractFire(makeFireSvg('fire-bottom-right')),
+};
 const readme = config.readme ?? {};
 const show = new Set<string>(readme.show ?? ['name','bio','location','company','website','socials','orcid','followers','following','repositories','stars','languages','contributions','dailyContributions','pinnedRepos']);
 const out = config.outputDir || 'dist';
@@ -23,12 +34,16 @@ try { profile = JSON.parse(await fs.readFile(path.join(out,'profile-data.json'),
 const user: Json = profile.data?.user ?? profile.user ?? profile;
 const calendar = user.contributionsCollection?.contributionCalendar ?? user.contributionCalendar ?? {};
 const days = (calendar.weeks ?? []).flatMap((w: Json) => w.contributionDays ?? []);
+const ownedRepos = (user.repositories?.nodes ?? []).filter(Boolean);
 const pinnedRepos = (user.pinnedItems?.nodes ?? []).filter(Boolean).slice(0,6);
-const topRepos = (user.repositories?.nodes ?? []).filter(Boolean).slice(0,6);
+const topRepos = ownedRepos.slice(0,6);
 const socialNodes = user.socialAccounts?.nodes ?? user.socialAccounts ?? [];
 const manualSocials = config.socials ?? {};
-const socials = [...socialNodes.map((s: Json) => ({name:s.provider || 'Social',url:s.url})), ...(user.twitterUsername ? [{name:'X',url:'https://x.com/'+encodeURIComponent(user.twitterUsername)}] : []), ...Object.entries(manualSocials).map(([name,url])=>({name,url}))].filter((s: Json)=>s.url).filter((s: Json)=>!['website','orcid'].includes(String(s.name).toLowerCase())).filter((s: Json,i:number,a:Json[])=>a.findIndex((v:Json)=>String(v.name).toLowerCase()===String(s.name).toLowerCase())===i);
-const orcid = config.orcid || socials.find((s: Json)=>String(s.name).toLowerCase()==='orcid')?.url || '';
+const socials = [...socialNodes.map((s: Json) => ({name:s.provider || 'Social',url:s.url})), ...Object.entries(manualSocials).map(([name,url])=>({name,url}))].filter((s: Json)=>s.url).filter((s: Json)=>!['website','orcid','x','twitter'].includes(String(s.name).toLowerCase())).filter((s: Json,i:number,a:Json[])=>a.findIndex((v:Json)=>String(v.name).toLowerCase()===String(s.name).toLowerCase())===i);
+const orcid = config.orcid || manualSocials.ORCID || manualSocials.Orcid || '';
+const twitterUrl = user.twitterUsername
+ ? 'https://x.com/'+encodeURIComponent(user.twitterUsername)
+ : socialNodes.find((s: Json)=>['x','twitter'].includes(String(s.provider).toLowerCase()))?.url || manualSocials.X || manualSocials.Twitter || '';
 const contributions = Number(calendar.totalContributions ?? user.contributions ?? config.contributions ?? 0);
 const visuals = readme.visualizations ?? {};
 const totalVisual = visuals.total ?? {};
@@ -45,9 +60,9 @@ const discussions = Number(user.repositoryDiscussions?.totalCount ?? 0);
 const authoredComments = Number(user.issueComments?.totalCount ?? 0) + Number(user.commitComments?.totalCount ?? 0) + Number(user.repositoryDiscussionComments?.totalCount ?? 0);
 const programs = [user.isCampusExpert ? 'Campus Expert' : '', user.isDeveloperProgramMember ? 'Developer Program' : '', user.isGitHubStar ? 'GitHub Star' : '', user.hasSponsorsListing ? 'Sponsors' : ''].filter(Boolean);
 const cc = user.contributionsCollection ?? {};
-const stars = Number(topRepos.reduce((n: number,r: Json)=>n+Number(r.stargazerCount||0),0));
+const stars = Number(ownedRepos.reduce((n: number,r: Json)=>n+Number(r.stargazerCount||0),0));
 const langs = new Map<string,{count:number,color:string}>();
-for (const r of topRepos) {
+for (const r of ownedRepos) {
  const l=r.primaryLanguage;
  if(l?.name){const v=langs.get(l.name)??{count:0,color:l.color||'#929792'};v.count++;langs.set(l.name,v);}
 }
@@ -99,7 +114,7 @@ if(show.has('website')&&website){const href=safeUrl(website);outParts.push(href?
 if(show.has('email')&&user.email)outParts.push(tx(58,242,'EMAIL  '+user.email,10,'#aab6a8',400,true));
 if(show.has('joined')&&user.createdAt)outParts.push(tx(58,302,'GITHUB MEMBER SINCE  '+String(user.createdAt).slice(0,10),9,'#8e988d',400,true));
 if(show.has('socials')){let sx=58;for(const s of socials.slice(0,9)){const href=safeUrl(s.url);outParts.push(href?'<a href="'+href+'">'+pill(sx,258,String(s.name))+'</a>':pill(sx,258,String(s.name)));sx+=Math.min(210,String(s.name).length*7+32);if(sx>1030)break;}}
-if(show.has('twitter')&&user.twitterUsername&&!show.has('socials'))outParts.push(tx(58,275,'X  @'+user.twitterUsername,9,'#ffffff',400,true));
+if(show.has('twitter')&&twitterUrl){const href=safeUrl(twitterUrl);const handle=user.twitterUsername?'X  @'+user.twitterUsername:'X / Twitter';outParts.push(href?'<a href="'+href+'">'+tx(58,275,handle,9,'#ffffff',400,true)+'</a>':tx(58,275,handle,9,'#ffffff',400,true));}
 if(show.has('orcid')&&orcid){const href=safeUrl(orcid);outParts.push(href?'<a href="'+href+'">'+tx(58,286,'ORCID  '+orcid,10,'#ffffff',400,true)+'</a>':tx(58,286,'ORCID  '+orcid,10,'#ffffff',400,true));}
 outParts.push(ln(310));
 let y=340;
@@ -137,10 +152,14 @@ if(show.has('pinnedRepos'))renderRepoCards('Pinned repositories',pinnedRepos);
 if(show.has('topRepos'))renderRepoCards('Top repositories by stars',topRepos);
 if(show.has('contributedRepos'))renderRepoCards('Repositories contributed to',contributedRepos.slice(0,6));
 if(show.has('projects')&&projects.length){outParts.push(label(58,y,'GitHub Projects'));projects.slice(0,8).forEach((p:Json,i:number)=>{const x=58+(i%2)*558,yy=y+17+Math.floor(i/2)*54;outParts.push('<rect x="'+x+'" y="'+yy+'" width="526" height="42" fill="#09090d" stroke="#303038"/>');outParts.push(tx(x+14,yy+26,p.title||'Project',11,fg,500));const href=safeUrl(p.url);if(href)outParts.push('<a href="'+href+'"><rect x="'+x+'" y="'+yy+'" width="526" height="42" fill="transparent"/></a>');});y+=Math.ceil(Math.min(8,projects.length)/2)*54+35;outParts.push(ln(y));y+=30;}
-if(show.has('repositories')&&repoCount)outParts.push(tx(58,y,'PUBLIC REPOSITORIES  '+repoCount.toLocaleString(),10,'#bdbdc4',500,true));
 const height=Math.max(500,y+54);
-const cornerArt=(kind:Corner,x:number,y:number,fx=false,fy=false)=>{if(kind==='fire'&&fireBody){return '<svg x="'+x+'" y="'+y+'" width="118" height="92" viewBox="'+fireViewBox+'" preserveAspectRatio="xMidYMid meet">'+fireBody+'</svg>';}return motif(kind,x,y,fx,fy);};
-const decor=[cornerArt(corners.topLeft??'fire',12,12),cornerArt(corners.topRight??'titan',1080,12,true),cornerArt(corners.bottomLeft??'demon',12,height-125,false,true),cornerArt(corners.bottomRight??'fire',1080,height-125,true,true)].join('');
+const cornerArt=(kind:Corner,x:number,y:number,fx:boolean,fy:boolean,fireArt:{viewBox:string;body:string})=>{if(kind==='fire'&&fireArt.body){return '<svg x="'+x+'" y="'+y+'" width="118" height="92" viewBox="'+fireArt.viewBox+'" preserveAspectRatio="xMidYMid meet">'+fireArt.body+'</svg>';}return motif(kind,x,y,fx,fy);};
+const decor=[
+ cornerArt(corners.topLeft??'fire',12,12,false,false,fireArts.topLeft),
+ cornerArt(corners.topRight??'titan',1080,12,true,false,fireArts.topRight),
+ cornerArt(corners.bottomLeft??'demon',12,height-125,false,true,fireArts.bottomLeft),
+ cornerArt(corners.bottomRight??'fire',1080,height-125,true,true,fireArts.bottomRight),
+].join('');
 const svg='<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="'+height+'" viewBox="0 0 1200 '+height+'" role="img"><title>'+esc(profileName)+' · GitBreathing profile</title><desc>Generated profile composition with selected identity, social, repository and contribution data.</desc><defs><pattern id="grain" width="4" height="4" patternUnits="userSpaceOnUse"><circle cx="1" cy="1" r=".35" fill="#fff" opacity=".06"/></pattern></defs><rect width="1200" height="'+height+'" fill="'+esc(bg)+'"/><rect width="1200" height="'+height+'" fill="url(#grain)"/><path d="M54 38H1146" stroke="#343934"/>'+tx(56,25,'GITBREATHING / PROFILE SYSTEM',9,'#9da49b',500,true)+outParts.join('')+decor+(readme.showCornerLabels?tx(58,height-24,'ART PRESET / '+String(preset).toUpperCase(),8,'#778176',400,true):'')+tx(1050,height-24,'GENERATED SVG',8,'#778176',400,true)+'</svg>';
 await fs.writeFile(path.join(out,'profile.svg'),svg,'utf8');
 console.log('Generated profile.svg for '+login+' with '+show.size+' selectable fields, '+days.length+' contribution days, '+pinnedRepos.length+' pinned repositories and '+topRepos.length+' top repositories.');
