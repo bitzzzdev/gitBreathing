@@ -7,14 +7,16 @@ type Mode = 'both' | 'total' | 'daily';
 type TotalStyle = 'number' | 'bar' | 'ring';
 type DailyStyle = 'heatmap' | 'bars';
 type Palette = 'mono' | 'ember' | 'ocean';
-type ProfileField = 'name' | 'bio' | 'location' | 'company' | 'website' | 'socials' | 'orcid' | 'followers' | 'following' | 'repositories' | 'stars' | 'languages' | 'contributions' | 'dailyContributions' | 'pinnedRepos';
+type ProfileField = 'name' | 'bio' | 'location' | 'company' | 'website' | 'socials' | 'orcid' | 'followers' | 'following' | 'repositories' | 'stars' | 'languages' | 'contributions' | 'dailyContributions' | 'pinnedRepos' | 'commits' | 'pullRequests' | 'issues' | 'reviews' | 'gists' | 'organizations' | 'starredRepos';
 type CornerTheme = 'none' | 'fire' | 'titan' | 'demon' | 'cursed' | 'chakra' | 'pirate' | 'spirit' | 'hunter' | 'dragon';
 const PROFILE_FIELDS: {id: ProfileField; label: string}[] = [
   {id:'name',label:'Display name'},{id:'bio',label:'Bio'},{id:'location',label:'Location'},{id:'company',label:'Company'},
   {id:'website',label:'Website'},{id:'socials',label:'Social accounts'},{id:'orcid',label:'ORCID'},
   {id:'followers',label:'Followers'},{id:'following',label:'Following'},{id:'repositories',label:'Public repositories'},
   {id:'stars',label:'Received stars'},{id:'languages',label:'Top languages'},{id:'contributions',label:'Total contributions'},
-  {id:'dailyContributions',label:'Daily contribution calendar'},{id:'pinnedRepos',label:'Pinned repositories'}
+  {id:'dailyContributions',label:'Daily contribution calendar'},{id:'pinnedRepos',label:'Pinned repositories'},
+  {id:'commits',label:'Commit contributions'},{id:'pullRequests',label:'Pull request contributions'},{id:'issues',label:'Issue contributions'},
+  {id:'reviews',label:'Code review contributions'},{id:'gists',label:'Public gists'},{id:'organizations',label:'Organizations'},{id:'starredRepos',label:'Starred repositories'}
 ];
 const CORNER_THEMES: {id: CornerTheme; label: string}[] = [
   {id:'none',label:'None'},{id:'fire',label:'Breathing fire'},{id:'titan',label:'Titan / freedom wings motif'},
@@ -50,7 +52,7 @@ export default function App() {
   const [cellSize, setCellSize] = useState(10);
   const [cellGap, setCellGap] = useState(3);
   const [weekdays, setWeekdays] = useState(true);
-  const [profileFields, setProfileFields] = useState<ProfileField[]>(['name','bio','socials','orcid','location','website','followers','following','repositories','stars','languages','contributions','dailyContributions','pinnedRepos']);
+  const [profileFields, setProfileFields] = useState<ProfileField[]>(['name','bio','socials','orcid','location','website','followers','following','repositories','stars','languages','contributions','dailyContributions','pinnedRepos','commits','pullRequests','issues','reviews','gists','organizations','starredRepos']);
   const [cornerThemes, setCornerThemes] = useState<Record<'topLeft'|'topRight'|'bottomLeft'|'bottomRight', CornerTheme>>({topLeft:'fire',topRight:'titan',bottomLeft:'demon',bottomRight:'fire'});
   const [animePreset, setAnimePreset] = useState('original');
   const [showCornerLabels, setShowCornerLabels] = useState(false);

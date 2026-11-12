@@ -59,7 +59,14 @@
       "languages",
       "contributions",
       "dailyContributions",
-      "pinnedRepos"
+      "pinnedRepos",
+      "commits",
+      "pullRequests",
+      "issues",
+      "reviews",
+      "gists",
+      "organizations",
+      "starredRepos"
     ],
     "layout": "editorial",
     "theme": "portfolio-paper",

@@ -21,7 +21,11 @@ const contributions = Number(calendar.totalContributions ?? user.contributions ?
 const followers = Number(user.followers?.totalCount ?? user.followers ?? 0);
 const following = Number(user.following?.totalCount ?? user.following ?? 0);
 const repoCount = Number(user.repositories?.totalCount ?? user.publicRepos ?? 0);
-const stars = Number(user.starredRepositories?.totalCount ?? repos.reduce((n: number,r: Json)=>n+Number(r.stargazerCount||0),0));
+const starredRepos = Number(user.starredRepositories?.totalCount ?? 0);
+const gists = Number(user.gists?.totalCount ?? 0);
+const organizations = user.organizations?.nodes ?? [];
+const cc = user.contributionsCollection ?? {};
+const stars = Number((user.repositories?.nodes ?? repos).reduce((n: number,r: Json)=>n+Number(r.stargazerCount||0),0));
 const langs = new Map<string,{count:number,color:string}>();
 for (const r of (user.repositories?.nodes ?? repos)) {
  const l=r.primaryLanguage;
@@ -75,12 +79,19 @@ const metrics=[
  {id:'followers',name:'FOLLOWERS',value:followers.toLocaleString()},
  {id:'following',name:'FOLLOWING',value:following.toLocaleString()},
  {id:'repositories',name:'PUBLIC REPOS',value:repoCount.toLocaleString()},
- {id:'stars',name:'STARS',value:stars.toLocaleString()},
- {id:'contributions',name:'CONTRIBUTIONS',value:contributions.toLocaleString()}
+ {id:'stars',name:'RECEIVED STARS',value:stars.toLocaleString()},
+ {id:'starredRepos',name:'STARRED REPOS',value:starredRepos.toLocaleString()},
+ {id:'contributions',name:'CONTRIBUTIONS',value:contributions.toLocaleString()},
+ {id:'commits',name:'COMMITS',value:Number(cc.totalCommitContributions||0).toLocaleString()},
+ {id:'pullRequests',name:'PULL REQUESTS',value:Number(cc.totalPullRequestContributions||0).toLocaleString()},
+ {id:'issues',name:'ISSUES',value:Number(cc.totalIssueContributions||0).toLocaleString()},
+ {id:'reviews',name:'CODE REVIEWS',value:Number(cc.totalPullRequestReviewContributions||0).toLocaleString()},
+ {id:'gists',name:'PUBLIC GISTS',value:gists.toLocaleString()}
 ].filter(m=>show.has(m.id));
 if(metrics.length){outParts.push(label(58,340,'Activity / account metrics'));const mw=1084/metrics.length;metrics.forEach((m,i)=>{const x=58+i*mw;outParts.push(tx(x,386,m.value,28,fg,600));outParts.push(tx(x,407,m.name,9,'#8e988d',500,true));if(i)outParts.push('<path d="M'+(x-16)+' 358V414" stroke="#343934"/>');});outParts.push(ln(430));y=465;}
 if(show.has('dailyContributions')&&days.length){outParts.push(label(58,y,'Daily contributions / last 12 months'));const startY=y+24;days.slice(-371).forEach((d:Json,i:number)=>{const col=Math.floor(i/7),row=i%7,n=Number(d.contributionCount||0);const fill=n===0?'#202520':n<2?'#465247':n<5?'#657c66':n<10?'#8ca58a':'#b7c2b3';outParts.push('<rect x="'+(58+col*14)+'" y="'+(startY+row*14)+'" width="10" height="10" rx="1" fill="'+fill+'"><title>'+esc(d.date)+': '+n+'</title></rect>');});outParts.push(tx(58,startY+116,contributions.toLocaleString()+' contributions · '+days.filter((d:Json)=>Number(d.contributionCount)>0).length+' active days',9,'#9ca59a',400,true));y=startY+150;outParts.push(ln(y));y+=32;}
 if(show.has('languages')&&topLanguages.length){outParts.push(label(58,y,'Languages / repository distribution'));const total=topLanguages.reduce((n,[,v])=>n+v.count,0)||1;let x=58;for(const [name,v] of topLanguages){const w=1084*v.count/total;outParts.push('<rect x="'+x+'" y="'+(y+16)+'" width="'+(w-3)+'" height="8" fill="'+esc(v.color)+'"/>');outParts.push(tx(x,y+43,name,10,'#c4cbc1',500));x+=w;}y+=72;outParts.push(ln(y));y+=32;}
+if(show.has('organizations')&&organizations.length){outParts.push(label(58,y,'Organizations'));let ox=58;for(const org of organizations.slice(0,8)){outParts.push(pill(ox,y+25,String(org.login||org.name||'Organization')));ox+=Math.min(220,String(org.login||org.name||'Organization').length*7+32);}y+=58;outParts.push(ln(y));y+=32;}
 if((show.has('pinnedRepos')||show.has('repositories'))&&repos.length){outParts.push(label(58,y,'Selected repositories'));const cw=526,ch=82;repos.forEach((r:Json,i:number)=>{const x=58+(i%2)*558,yy=y+17+Math.floor(i/2)*(ch+10);outParts.push('<rect x="'+x+'" y="'+yy+'" width="'+cw+'" height="'+ch+'" rx="2" fill="#101410" stroke="#353c34"/>');outParts.push(tx(x+14,yy+24,r.name||'Repository',13,fg,600));outParts.push(tx(x+14,yy+45,String(r.description||'').slice(0,72),9,'#9ca59a'));outParts.push(tx(x+14,yy+66,'★ '+Number(r.stargazerCount||0)+'   Forks '+Number(r.forkCount||0)+'   '+(r.primaryLanguage?.name||''),9,'#b5bdb3',400,true));if(r.url)outParts.push('<a href="'+esc(r.url)+'"><rect x="'+x+'" y="'+yy+'" width="'+cw+'" height="'+ch+'" fill="transparent"/></a>');});y+=Math.ceil(repos.length/2)*(ch+10)+35;}
 const height=Math.max(500,y+54);
 const decor=[motif(corners.topLeft??'fire',12,12),motif(corners.topRight??'titan',1080,12,true),motif(corners.bottomLeft??'demon',12,height-125,false,true),motif(corners.bottomRight??'fire',1080,height-125,true,true)].join('');

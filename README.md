@@ -19,7 +19,8 @@ Configure `readme.show` in `gitbreathing.json` to select any combination of:
 - Display name, username, bio, location, company and website
 - GitHub social accounts and manually configured links
 - ORCID, including a manually supplied ORCID URL
-- Followers, following, public repositories and stars
+- Followers, following, public repositories, received stars, starred repositories, gists and organizations
+- Commit, pull request, issue and code-review contribution totals
 - Top repository languages and pinned repositories
 - Total contributions and the daily contribution calendar
 
