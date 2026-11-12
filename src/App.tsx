@@ -38,8 +38,8 @@ export default function App() {
   const [weekdays, setWeekdays] = useState(true);
 
   const power = useMemo(() => Math.pow(Math.min(1, count / Math.max(1, max)), curve), [count, max, curve]);
-  const piece = useMemo(() => createBreathingPiece({ styles, power, seed: \`${platform}:${user.toLowerCase()}\` }), [styles, power, platform, user]);
-  const daily = useMemo(() => makePreviewDays(count, \`${platform}:${user.toLowerCase()}\`), [count, platform, user]);
+  const piece = useMemo(() => createBreathingPiece({ styles, power, seed: `${platform}:${user.toLowerCase()}` }), [styles, power, platform, user]);
+  const daily = useMemo(() => makePreviewDays(count, `${platform}:${user.toLowerCase()}`), [count, platform, user]);
   const dailyMax = Math.max(1, ...daily);
   const toggle = (id: StyleId) => setStyles((items) => items.includes(id) ? items.filter((item) => item !== id) : [...items, id]);
   const move = (id: StyleId, direction: number) => setStyles((items) => {
@@ -47,7 +47,7 @@ export default function App() {
     if (from < 0 || to < 0 || to >= next.length) return items;
     [next[from], next[to]] = [next[to], next[from]]; return next;
   });
-  const paletteClass = (palette: Palette) => \`palette-\${palette}\`;
+  const paletteClass = (palette: Palette) => `palette-${palette}`;
 
   return <main className="site-shell">
     <header className="topbar">
@@ -74,13 +74,13 @@ export default function App() {
           <div className="section-heading"><span className="eyebrow">BREATHING STYLE</span><span className="step-index">02</span></div>
           <h2>Choose your technique</h2>
           <p className="section-description">Select styles and arrange their rendering order. Earlier layers sit beneath later layers.</p>
-          <div className="style-list">{IDS.map((id) => <div className={\`style-row \${styles.includes(id) ? 'is-selected' : ''}\`} key={id}>
+          <div className="style-list">{IDS.map((id) => <div className={`style-row ${styles.includes(id) ? 'is-selected' : ''}`} key={id}>
             <button className="style-select" onClick={() => toggle(id)} aria-pressed={styles.includes(id)}>
               <span className="style-swatches">{STYLES[id].colors.map((color) => <i style={{ background: color }} key={color}/>)}</span>
-              <span className="style-copy"><b>{STYLES[id].name}</b><small>{STYLES[id].parent ? \`From \${STYLES[STYLES[id].parent].name}\` : 'Origin style'} · {STYLES[id].forms} forms</small></span>
+              <span className="style-copy"><b>{STYLES[id].name}</b><small>{STYLES[id].parent ? `From ${STYLES[STYLES[id].parent].name}` : 'Origin style'} · {STYLES[id].forms} forms</small></span>
               <span className="style-state">{styles.includes(id) ? 'ON' : 'ADD'}</span>
             </button>
-            {styles.includes(id) && <div className="layer-controls"><span>Layer {styles.indexOf(id) + 1}</span><button onClick={() => move(id, -1)} aria-label={\`Move \${id} up\`} disabled={styles.indexOf(id) === 0}>↑</button><button onClick={() => move(id, 1)} aria-label={\`Move \${id} down\`} disabled={styles.indexOf(id) === styles.length - 1}>↓</button></div>}
+            {styles.includes(id) && <div className="layer-controls"><span>Layer {styles.indexOf(id) + 1}</span><button onClick={() => move(id, -1)} aria-label={`Move ${id} up`} disabled={styles.indexOf(id) === 0}>↑</button><button onClick={() => move(id, 1)} aria-label={`Move ${id} down`} disabled={styles.indexOf(id) === styles.length - 1}>↓</button></div>}
           </div>)}</div>
           <p className="field-note">{styles.length} of 14 styles selected. Select at least one style.</p>
         </section>
@@ -110,22 +110,22 @@ export default function App() {
           </div>
           {mode !== 'daily' && <article className="visual-card">
             <div className="visual-card-heading"><div><span className="eyebrow">A / PRIMARY</span><h3>Total contributions</h3></div><span className="data-tag">ALL TYPES</span></div>
-            <div className={\`total-visual \${paletteClass(totalPalette)}\`}>
+            <div className={`total-visual ${paletteClass(totalPalette)}`}>
               {totalStyle === 'number' && <div className="total-number"><strong>{count.toLocaleString()}</strong><span>contributions in the selected period</span></div>}
-              {totalStyle === 'bar' && <div className="total-bar-view"><div className="total-number"><strong>{count.toLocaleString()}</strong><span>of {max.toLocaleString()} contributions</span></div><div className="total-track"><i style={{width:\`\${Math.min(100,count/Math.max(1,max)*100)}%\`}}/></div></div>}
-              {totalStyle === 'ring' && <div className="total-ring-view"><div className="ring" style={{'--ring-progress':\`\${Math.min(100,count/Math.max(1,max)*100)}%\`} as React.CSSProperties}><strong>{Math.round(Math.min(1,count/Math.max(1,max))*100)}<small>%</small></strong></div><div className="total-number"><strong>{count.toLocaleString()}</strong><span>contributions</span></div></div>}
+              {totalStyle === 'bar' && <div className="total-bar-view"><div className="total-number"><strong>{count.toLocaleString()}</strong><span>of {max.toLocaleString()} contributions</span></div><div className="total-track"><i style={{width:`${Math.min(100,count/Math.max(1,max)*100)}%`}}/></div></div>}
+              {totalStyle === 'ring' && <div className="total-ring-view"><div className="ring" style={{'--ring-progress':`${Math.min(100,count/Math.max(1,max)*100)}%`} as React.CSSProperties}><strong>{Math.round(Math.min(1,count/Math.max(1,max))*100)}<small>%</small></strong></div><div className="total-number"><strong>{count.toLocaleString()}</strong><span>contributions</span></div></div>}
             </div>
             <div className="visual-controls"><label>Visualization<select value={totalStyle} onChange={(e) => setTotalStyle(e.target.value as TotalStyle)}><option value="number">Large number</option><option value="bar">Progress bar</option><option value="ring">Progress ring</option></select></label><label>Palette<select value={totalPalette} onChange={(e) => setTotalPalette(e.target.value as Palette)}><option value="mono">Monochrome</option><option value="ember">Ember</option><option value="ocean">Ocean</option></select></label></div>
           </article>}
           {mode !== 'total' && <article className="visual-card">
             <div className="visual-card-heading"><div><span className="eyebrow">B / SECONDARY</span><h3>Daily contributions</h3></div><span className="data-tag">364 DAYS</span></div>
-            <div className={\`daily-visual \${paletteClass(dailyPalette)}\`}>
+            <div className={`daily-visual ${paletteClass(dailyPalette)}`}>
               {dailyStyle === 'heatmap' ? <div className="heatmap-wrap">
                 {weekdays && <div className="weekday-labels"><span>Mon</span><span>Wed</span><span>Fri</span></div>}
-                <div className="heatmap-grid" style={{gridTemplateRows:\`repeat(7, \${cellSize}px)\`,gridAutoColumns:\`\${cellSize}px\`,gap:\`\${cellGap}px\`}}>
-                  {daily.map((value,index) => <i key={index} title={\`\${value} contributions\`} className={value===0?'level-0':value/dailyMax<.25?'level-1':value/dailyMax<.5?'level-2':value/dailyMax<.75?'level-3':'level-4'}/>)}
+                <div className="heatmap-grid" style={{gridTemplateRows:`repeat(7, ${cellSize}px)`,gridAutoColumns:`${cellSize}px`,gap:`${cellGap}px`}}>
+                  {daily.map((value,index) => <i key={index} title={`${value} contributions`} className={value===0?'level-0':value/dailyMax<.25?'level-1':value/dailyMax<.5?'level-2':value/dailyMax<.75?'level-3':'level-4'}/>)}
                 </div>
-              </div> : <div className="daily-bars">{daily.filter((_,index)=>index%7===0).map((value,index)=><i key={index} title={\`\${value} contributions\`} style={{height:\`\${Math.max(2,value/dailyMax*100)}%\`}}/>)}</div>}
+              </div> : <div className="daily-bars">{daily.filter((_,index)=>index%7===0).map((value,index)=><i key={index} title={`${value} contributions`} style={{height:`${Math.max(2,value/dailyMax*100)}%`}}/>)}</div>}
               <div className="daily-legend"><span>LESS</span><i className="level-0"/><i className="level-1"/><i className="level-2"/><i className="level-3"/><i className="level-4"/><span>MORE</span></div>
             </div>
             <div className="daily-summary"><span><b>{daily.reduce((a,b)=>a+b,0).toLocaleString()}</b> total contributions</span><span><b>{daily.filter((v)=>v>0).length}</b> active days</span><span><b>{dailyMax}</b> busiest day</span></div>
