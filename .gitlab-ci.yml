@@ -1,4 +1,5 @@
-stages: [render]
+stages:
+  - render
 
 render-gitbreathing:
   stage: render
@@ -10,31 +11,41 @@ render-gitbreathing:
   before_script:
     - apt-get update -qq && apt-get install -y -qq git
     - npm install --no-audit --no-fund
-  script:
-    - |
-      if [ -z "${GITLAB_TOKEN:-}" ]; then
-        echo "Set a masked GITLAB_TOKEN with API read and repository write access." >&2
-        exit 1
-      fi
-      if [ -z "${CONTRIBUTIONS:-}" ]; then
-        USERNAME=$(node -p "JSON.parse(require('fs').readFileSync('gitbreathing.json','utf8')).username")
-        USER_ID=$(curl --fail-with-body -fsS --header "PRIVATE-TOKEN: ${GITLAB_TOKEN}" --get --data-urlencode "username=${USERNAME}" "${CI_API_V4_URL}/users" | node -e "let s='';process.stdin.on('data',d=>s+=d).on('end',()=>{const a=JSON.parse(s);if(!a.length)process.exit(2);console.log(a[0].id)})")
-        PAGE=1
-        TOTAL=0
-        AFTER=$(date -u -d '1 year ago' +%F)
-        while :; do
-          EVENTS=$(curl --fail-with-body -fsS --header "PRIVATE-TOKEN: ${GITLAB_TOKEN}" --get --data-urlencode "after=${AFTER}" --data-urlencode "per_page=100" --data-urlencode "page=${PAGE}" "${CI_API_V4_URL}/users/${USER_ID}/events")
-          COUNT=$(printf '%s' "$EVENTS" | node -e "let s='';process.stdin.on('data',d=>s+=d).on('end',()=>console.log(JSON.parse(s).length))")
-          TOTAL=$((TOTAL + COUNT))
-          [ "$COUNT" -lt 100 ] && break
-          PAGE=$((PAGE + 1))
-        done
-        export CONTRIBUTIONS="$TOTAL"
-        echo "GitLab Events API returned ${TOTAL} activity events in the one-year window. This is an event-count approximation, not a canonical contribution-calendar total."
-      fi
-      npm run render
-    - git config user.name 'GitBreathing CI'
-    - git config user.email 'gitbreathing-bot@users.noreply.gitlab.com'
-    - git add dist/slash.svg dist/slash.gif dist/slash.png dist/metadata.json
-    - git diff --cached --quiet || git commit -m 'chore: update GitBreathing artwork'
-    - git push "https://oauth2:${GITLAB_TOKEN}@${CI_SERVER_HOST}/${CI_PROJECT_PATH}.git" "HEAD:${CI_DEFAULT_BRANCH}"
+  script: |
+    set -eu
+
+    if [ -z "${GITLAB_TOKEN:-}" ]; then
+      echo "Set a masked GITLAB_TOKEN with API read and repository write access." >&2
+      exit 1
+    fi
+
+    if [ -z "${CONTRIBUTIONS:-}" ]; then
+      USERNAME=$(node -p "JSON.parse(require('fs').readFileSync('gitbreathing.json','utf8')).username")
+      USER_ID=$(curl --fail-with-body -fsS --header "PRIVATE-TOKEN: ${GITLAB_TOKEN}" --get --data-urlencode "username=${USERNAME}" "${CI_API_V4_URL}/users" | node -e "let s='';process.stdin.on('data',d=>s+=d).on('end',()=>{const a=JSON.parse(s);if(!a.length)process.exit(2);console.log(a[0].id)})")
+
+      PAGE=1
+      TOTAL=0
+      AFTER=$(date -u -d '1 year ago' +%F)
+
+      while :; do
+        EVENTS=$(curl --fail-with-body -fsS --header "PRIVATE-TOKEN: ${GITLAB_TOKEN}" --get --data-urlencode "after=${AFTER}" --data-urlencode "per_page=100" --data-urlencode "page=${PAGE}" "${CI_API_V4_URL}/users/${USER_ID}/events")
+        COUNT=$(printf '%s' "$EVENTS" | node -e "let s='';process.stdin.on('data',d=>s+=d).on('end',()=>console.log(JSON.parse(s).length))")
+        TOTAL=$((TOTAL + COUNT))
+        [ "$COUNT" -lt 100 ] && break
+        PAGE=$((PAGE + 1))
+      done
+
+      export CONTRIBUTIONS="$TOTAL"
+      echo "GitLab Events API returned ${TOTAL} activity events in the one-year window. This is an event-count approximation, not a canonical contribution-calendar total."
+    fi
+
+    npm run render
+    git config user.name 'GitBreathing CI'
+    git config user.email 'gitbreathing-bot@users.noreply.gitlab.com'
+    git add dist/slash.svg dist/slash.gif dist/slash.png dist/metadata.json
+    if ! git diff --cached --quiet; then
+      git commit -m "chore: update GitBreathing artwork"
+      git push "https://oauth2:${GITLAB_TOKEN}@${CI_SERVER_HOST}/${CI_PROJECT_PATH}.git" "HEAD:${CI_DEFAULT_BRANCH}"
+    else
+      echo "No artwork changes."
+    fi
